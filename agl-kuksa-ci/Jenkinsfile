@@ -1,0 +1,129 @@
+/*
+  ******************************************************************************
+  Copyright (c) 2018 Dortmund University of Applied Sciences and Arts
+  All rights reserved. This program and the accompanying materials
+  are made available under the terms of the Eclipse Public License v2.0
+  which accompanies this distribution, and is available at
+  https://www.eclipse.org/org/documents/epl-2.0/index.php
+
+  Contributors:
+      Pedro Cuadra - initial build system and tooling
+  ******************************************************************************
+*/
+
+pipeline {
+  agent {
+    node {
+      label 'master'
+    }
+
+  }
+  stages {
+    stage('Clone') {
+      parallel {
+        stage('agl-rover') {
+          steps {
+            sh 'mkdir -p agl-rover'
+            dir(path: 'agl-rover') {
+              git(url: 'ssh://git@gitlab.idial.institute:2222/appstacle/agl-kuksa.git', credentialsId: '4a4e5724-d69e-475f-97a9-0526f3e4a0c4')
+            }
+
+          }
+        }
+        stage('agl-kuksa') {
+          steps {
+            sh 'mkdir -p agl-kuksa'
+            dir(path: 'agl-kuksa') {
+              git(url: 'ssh://git@gitlab.idial.institute:2222/appstacle/agl-kuksa.git', credentialsId: '4a4e5724-d69e-475f-97a9-0526f3e4a0c4')
+            }
+
+          }
+        }
+      }
+    }
+    stage('Configure') {
+      parallel {
+        stage('agl-rover') {
+          steps {
+            dir(path: 'agl-rover') {
+              sh '''mkdir -p build
+cd build
+cmake ..
+make agl-rover-config
+echo "SSTATE_DIR = \\"/var/jenkins_home/yocto/sstate_dir\\"" >> agl/build/conf/local.conf
+echo "DL_DIR = \\"/var/jenkins_home/yocto/downloads\\"" >> agl/build/conf/local.conf'''
+            }
+
+          }
+        }
+        stage('agl-kuksa') {
+          steps {
+            dir(path: 'agl-kuksa') {
+              sh '''mkdir -p build
+cd build
+cmake ..
+make agl-kuksa-config
+echo "SSTATE_DIR = \\"/var/jenkins_home/yocto/sstate_dir\\"" >> agl/build/conf/local.conf
+echo "DL_DIR = \\"/var/jenkins_home/yocto/downloads\\"" >> agl/build/conf/local.conf'''
+            }
+
+          }
+        }
+      }
+    }
+    stage('Collect Configure Artifacts') {
+      parallel {
+        stage('agl-rover') {
+          steps {
+            archiveArtifacts 'agl-rover/build/agl/build/conf/*'
+            archiveArtifacts 'agl-rover/tools/cmake/versions.cmake'
+          }
+        }
+        stage('agl-kuksa') {
+          steps {
+            archiveArtifacts 'agl-kuksa/build/agl/build/conf/*'
+            archiveArtifacts 'agl-kuksa/tools/cmake/versions.cmake'
+          }
+        }
+      }
+    }
+    stage('Build') {
+      parallel {
+        stage('agl-rover') {
+          steps {
+            dir(path: 'agl-rover') {
+              sh '''cd build
+make agl-rover-build'''
+            }
+
+          }
+        }
+        stage('agl-kuksa') {
+          steps {
+            dir(path: 'agl-kuksa') {
+              sh '''cd build
+make agl-kuksa-build'''
+            }
+
+          }
+        }
+      }
+    }
+    stage('Collect Build Artifacts') {
+      parallel {
+        stage('Manifests') {
+          steps {
+            archiveArtifacts 'agl-rover/build/tmp/deploy/sdk/*.manifest'
+            archiveArtifacts 'agl-kuksa/build/tmp/deploy/sdk/*.manifest'
+          }
+        }
+      }
+    }
+  }
+  post {
+    always {
+      echo 'One way or another, I have finished'
+      deleteDir() /* clean up our workspace */
+    }
+  }
+}
