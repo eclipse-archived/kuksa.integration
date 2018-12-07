@@ -1,0 +1,8 @@
+testCases:
+  testGetTenantInfo:
+    results:
+    - url: /default/controller/v1/HMI
+      httpMethod: GET
+      statusCode: '200'
+      header: null
+      body: '{"config":{"polling":{"sleep":"00:05:00"}},"_links":{"configData":{"href":"http://104.40.130.77:8080/default/controller/v1/HMI/configData"}}}'

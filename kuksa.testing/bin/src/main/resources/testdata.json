@@ -1,0 +1,36 @@
+{
+	"1": {
+		"test-suite": "hono-testsuite",
+		"test-cases": {
+			"1": {"test-case": "getTenantInfo",
+				"expected-result": "200",
+				"test-data": [ "DEFAULT_TENANT" ]},
+			"2": {"test-case": "getDeviceInfo",
+				"expected-result": "200",
+				"test-data": [ "DEFAULT_TENANT", 4711]},
+			"3": {"test-case": "postTenantInfo",
+				"expected-result": "400",
+				"test-data": [ {"tenant-id": "ASSYSTEM_TEST_TENANT"} ]},
+			"4": {"test-case": "postDeviceInfo",
+				"expected-result": "400",
+				"test-data": [ "ASSYSTEM_TEST_TENANT", {"device-id": 1} ]},
+			"5": {"test-case": "postTelemetryData",
+				"expected-result": "404",
+				"test-data": [ "ASSYSTEM_TEST_TENANT", 1, {"temperature": 5} ]}
+			}
+
+		},
+
+
+	"2": {
+		"test-suite": "hawkbit-testsuite",
+		"test-cases": {
+			"1": {"test-case": "getDeviceInformation",
+				"expected-result": "200",
+				"test-data": [ "HMI" ]},
+			"2": {"test-case": "getSoftwaremodulesArtifacts",
+				"expected-result": "200",
+				"test-data": [ "HMI", "22" ]}
+		}
+	}
+}
