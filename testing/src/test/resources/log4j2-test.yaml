@@ -1,0 +1,44 @@
+Configutation:
+  Properties:
+    Property:
+    - name: basePath
+      value: logs/log4j2/test
+    - name: loggingPattern
+      value: '[%-5level] %d{yyyy-MM-dd HH:mm:ss} [%t] [%c{1}] %msg%n'
+  Appenders:
+    Console:
+      name: Console_Appender
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: ${loggingPattern}
+    File:
+      name: File_Appender
+      fileName: ${basePath}/error.log
+      PatternLayout:
+        pattern: ${loggingPattern}
+    RollingFile:
+      name: RollingFile_Appender
+      fileName: ${basePath}/rollingFile.log
+      filePattern: ${basePath}/archive/rollingfile.%d{yyyy-MM-dd-hh-mm}-%i.gz
+      PatternLayout:
+        pattern: ${loggingPattern}
+      Policies:
+        SizeBasedTriggeringPolicy:
+          size: 1024 KB
+      DefaultRollOverStrategy:
+        max: 30
+  Loggers:
+    Logger:
+      name: com.eclipse
+      level: all
+      additivity: false
+      AppenderRef:
+      - ref: Console_Appender
+      - ref: RollingFile_Appender
+      - ref: File_Appender
+    Root:
+      level: error
+      AppenderRef:
+      - ref: Console_Appender
+      - ref: RollingFile_Appender
+      - ref: File_Appender
