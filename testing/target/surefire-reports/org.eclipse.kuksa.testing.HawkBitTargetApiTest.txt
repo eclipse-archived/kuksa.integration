@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.eclipse.kuksa.testing.HawkBitTargetApiTest
+-------------------------------------------------------------------------------
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.263 s - in org.eclipse.kuksa.testing.HawkBitTargetApiTest
