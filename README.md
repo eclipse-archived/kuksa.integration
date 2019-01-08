@@ -14,5 +14,12 @@ Contributors:
 
 # Kuksa-Integration Repo
 
-Currently, the Jenkins file directs to servers from FH-Dortmund. Subject to be changed as soon as migrated to Eclipse.
-This Repo will further contain all necessary tests for Eclipse Kuksa.
+Contains build scripts and tests.
+
+## Run Tests
+
+TBD
+
+## Run Build
+
+TBD
