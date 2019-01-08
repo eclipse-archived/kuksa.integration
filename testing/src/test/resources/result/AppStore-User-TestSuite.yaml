@@ -1,0 +1,43 @@
+testCases:
+  testCreateUser:
+    results:
+    - url: /api/1.0/user
+      httpMethod: POST
+      statusCode: 201
+      header: null
+      body: null
+  testGetUser:
+    results:
+    - url: /api/1.0/user
+      httpMethod: GET
+      statusCode: 200
+      header: null
+      body: null
+  testUpdateUser:
+    results:
+    - url: /api/1.0/user
+      httpMethod: PUT
+      statusCode: 200
+      header: null
+      body: null
+  testDeleteUser:
+    results:
+    - url: /api/1.0/user
+      httpMethod: DELETE
+      statusCode: 200
+      header: null
+      body: null
+  testGetAllUser:
+    results:
+    - url: /api/1.0/users
+      httpMethod: GET
+      statusCode: 200
+      header: null
+      body: null
+  testValidateUser:
+    results:
+    - url: /api/1.0/user/validation
+      httpMethod: POST
+      statusCode: 200
+      header: null
+      body: null
