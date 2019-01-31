@@ -1,3 +1,15 @@
+/*********************************************************************
+ * Copyright (c)  2019 Assystem GmbH [and others].
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors: Assystem GmbH
+ **********************************************************************/
+
 package org.eclipse.kuksa.testing;
 
 import org.eclipse.kuksa.testing.client.Request;
@@ -7,6 +19,7 @@ import org.eclipse.kuksa.testing.model.TestSuite;
 import org.eclipse.kuksa.testing.model.YamlConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
@@ -38,6 +51,7 @@ import static org.junit.Assert.fail;
 public abstract class AbstractTestCase {
 
     protected static final String PROTOCOL_HTTP = "http://";
+    protected static final String PROTOCOL_TCP = "tcp://";
 
     private static final String TEST_RESULT_PATH = "src/test/resources/result/";
 
@@ -62,7 +76,7 @@ public abstract class AbstractTestCase {
      * logging
      */
     @Before
-    public final void initialze() throws Exception {
+    public final void initialize() throws Exception {
         LOGGER.debug("SETUP START");
         if (testSuite == null) {
             String file = TEST_RESULT_PATH + getTestFile();
@@ -142,6 +156,14 @@ public abstract class AbstractTestCase {
             fail();
         }
         return null;
+    }
+
+    protected MqttMessage setMqttMessage(String value) {
+        byte[] payload = value.getBytes();
+        MqttMessage msg = new MqttMessage(payload);
+        msg.setQos(0);
+        msg.setRetained(true);
+        return msg;
     }
 
     protected JSONObject getJsonObject(JSONObject json, String property) {

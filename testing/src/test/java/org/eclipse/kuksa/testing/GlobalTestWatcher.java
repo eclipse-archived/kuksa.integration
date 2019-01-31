@@ -1,3 +1,15 @@
+/*********************************************************************
+ * Copyright (c)  2019 Assystem GmbH [and others].
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors: Assystem GmbH
+ **********************************************************************/
+
 package org.eclipse.kuksa.testing;
 
 import org.apache.logging.log4j.LogManager;
@@ -25,7 +37,7 @@ public class GlobalTestWatcher extends TestWatcher {
 	@Override
 	protected void skipped(AssumptionViolatedException e, Description description) {
 		super.skipped(e, description);
-		LOGGER.info("SKIPED TESTCASE " + description.getMethodName(), e);
+		LOGGER.info("SKIPPED TESTCASE " + description.getMethodName(), e);
 	}
 
 	@Override

@@ -1,3 +1,15 @@
+/*********************************************************************
+ * Copyright (c)  2019 Assystem GmbH [and others].
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors: Assystem GmbH
+ **********************************************************************/
+
 package org.eclipse.kuksa.testing;
 
 import org.eclipse.kuksa.testing.client.Request;
@@ -49,6 +61,7 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
         JSONObject body = new JSONObject(element);
 
         controllerId = body.getString("controllerId");
+
     }
 
     private String createTarget() throws JSONException {
@@ -176,7 +189,7 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
         JSONObject body = new JSONObject(responseEntity.getBody());
         assertNotNull(body);
 
-        assertEquals(14, body.get("total"));
+        assertEquals(4, body.get("total"));
     }
 
     @Test

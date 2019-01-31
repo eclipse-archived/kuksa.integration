@@ -75,6 +75,13 @@
 			<version>0.12.2</version>
 		</dependency>
 
+		<!-- PAHO LIBRARY -->
+		<dependency>
+			<groupId>org.eclipse.paho</groupId>
+			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+
 		<!-- VERTX LIBRARY -->
 		<dependency>
 			<groupId>io.vertx</groupId>
