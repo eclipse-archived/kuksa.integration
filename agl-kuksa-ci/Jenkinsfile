@@ -25,7 +25,7 @@ pipeline {
           steps {
             sh 'mkdir -p agl-rover'
             dir(path: 'agl-rover') {
-              git(url: 'ssh://git@gitlab.idial.institute:2222/appstacle/agl-kuksa.git', credentialsId: '4a4e5724-d69e-475f-97a9-0526f3e4a0c4')
+              git(url: 'https://github.com/app4mc-rover/meta-rover.git', credentialsId: 'TBD')
             }
 
           }
@@ -34,7 +34,7 @@ pipeline {
           steps {
             sh 'mkdir -p agl-kuksa'
             dir(path: 'agl-kuksa') {
-              git(url: 'ssh://git@gitlab.idial.institute:2222/appstacle/agl-kuksa.git', credentialsId: '4a4e5724-d69e-475f-97a9-0526f3e4a0c4')
+              git(url: 'https://github.com/eclipse/kuksa.invehicle.git', credentialsId: 'TBD')
             }
 
           }
