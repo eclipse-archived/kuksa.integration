@@ -1,3 +1,15 @@
+/*********************************************************************
+ * Copyright (c)  2019 Assystem GmbH [and others].
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors: Assystem GmbH
+ **********************************************************************/
+
 package org.eclipse.kuksa.testing.config;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +26,9 @@ public final class HonoConfiguration {
 
 	@Value("${HONO_ADAPTER_HTTP_VERTX_STABLE}")
 	private String adapterHttpVertxStable;
+
+	@Value("${HONO_ADAPTER_MQTT_VERTX_STABLE}")
+	private String adapterMqttVertxStable;
 
 	/**
 	 * @return the deviceRegistryStable
@@ -34,6 +49,13 @@ public final class HonoConfiguration {
 	 */
 	public String getAdapterHttpVertxStable() {
 		return adapterHttpVertxStable;
+	}
+
+	/**
+	 * @return the adapterHttpVertxStable
+	 */
+	public String getAdapterMqttVertxStable() {
+		return adapterMqttVertxStable;
 	}
 
 }

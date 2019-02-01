@@ -1,11 +1,23 @@
+/*********************************************************************
+ * Copyright (c)  2019 Assystem GmbH [and others].
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors: Assystem GmbH
+ **********************************************************************/
+
 package org.eclipse.kuksa.testing;
 
 import org.eclipse.kuksa.testing.client.Request;
 import org.eclipse.kuksa.testing.config.GlobalConfiguration;
 import org.eclipse.kuksa.testing.config.HonoConfiguration;
-import org.eclipse.kuksa.testing.model.AMQPMessage;
 import org.eclipse.kuksa.testing.model.Credentials;
 import org.eclipse.kuksa.testing.model.ResponseResult;
+import org.eclipse.paho.client.mqttv3.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,6 +31,9 @@ import org.springframework.test.context.ContextConfiguration;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -30,9 +45,9 @@ public class HonoApiTest extends AbstractTestCase {
 
     private static final String PATH_REGISTRATION = "/registration/";
 
-    private static final String PATH_CONTROL = "/control/";
+    private static final String PATH_CONTROL = "/rover/1/RoverDriving/control/";
 
-    private static final String PATH_TELEMETRY = "/telemetry/";
+    private static final String PATH_TELEMETRY = "rover/1/telemetry";
 
     private static final String PATH_CREDENTIALS = "/credentials/";
 
@@ -109,8 +124,7 @@ public class HonoApiTest extends AbstractTestCase {
     }
 
     /*
-     * TODO FOR EACH POST-REQUEST WE NEED A ROLLBACK-FUNCTION -> the test will fail
-     * after one successful run
+     * TODO FOR EACH POST-REQUEST WE NEED A ROLLBACK-FUNCTION -> the test will fail after one successful run
      */
 
     public void testPostTenantInfo() throws JSONException {
@@ -154,7 +168,7 @@ public class HonoApiTest extends AbstractTestCase {
  //       assertNotNull(body);
     }
 
-    @Test
+//    @Test
     public void testPostTelemetryData() throws JSONException {
         // GIVEN
         String username = "1@ASSYSTEM_TENANT4";
@@ -179,7 +193,7 @@ public class HonoApiTest extends AbstractTestCase {
 //		assertNotNull(body);
     }
 
-    @Test
+//    @Test
     public void testPostEventData() throws JSONException {
         // GIVEN
         String username = "1@ASSYSTEM_TENANT4";
@@ -204,35 +218,59 @@ public class HonoApiTest extends AbstractTestCase {
 //		assertNotNull(body);
     }
 
-//    @Test
-    public void testPostControlData() throws JSONException {
-        // GIVEN
-        String username = "sensor1@TENANT5";
-        String password = "hashdis";
 
-        AMQPMessage message = new AMQPMessage();
 
-        assertEquals(HttpStatus.ACCEPTED, message.getBufferResult());
+    @Test
+    public void testPublishControlData() throws Exception {
+        // publish
+        String publisherId = UUID.randomUUID().toString();
+        try {
+            IMqttClient client = new MqttClient(PROTOCOL_TCP + config.getAdapterMqttVertxStable(),publisherId);
 
-/*
-        Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDispatchRouterStable(), PATH_CONTROL))
-                .post()
-                .headers(getBaseRequestHeaders())
-                .body(new JSONObject()
-                        .put("left", "5"))
-                .credentials(new Credentials(username, password))
-                .build();
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setAutomaticReconnect(true);
+            options.setCleanSession(true);
+        //    options.setUserName("assystem1@ASSYSTEM_TENANT4");
+        //    options.setPassword("whySoSecret".toCharArray());
+            options.setConnectionTimeout(10);
+            client.connect(options);
 
-        // WHEN
-        ResponseEntity<String> response = executeApiCall(request);
+            // receive
+            client.setCallback(new MqttCallback() {
+                @Override
+                public void connectionLost(Throwable throwable) {
+                    LOGGER.info("MQTT Error - Connection lost", throwable);
+                }
 
-        // THEN
-        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
-*/
+                @Override
+                public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
+                    LOGGER.info("MQTT Message arrived successfully: " + mqttMessage);
+                    assertNotNull(mqttMessage.getPayload());
+                }
 
-//		JSONObject body = getBodyAsJson(response);
-//		assertNotNull(body);
+                @Override
+                public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+                    LOGGER.info("MQTT Message delivery completed " + iMqttDeliveryToken);
+                    assertEquals(true, iMqttDeliveryToken.isComplete());
+                }
+            });
+            CountDownLatch receivedSignal = new CountDownLatch(10);
+            client.subscribe(PATH_TELEMETRY, (topic, msg) -> {
+                byte[] payload = msg.getPayload();
+                receivedSignal.countDown();
+            });
+
+            receivedSignal.await(5, TimeUnit.SECONDS);
+
+
+            client.publish(PATH_CONTROL, setMqttMessage("{ left: 5.0 }"));
+            client.publish(PATH_TELEMETRY, setMqttMessage(String.format("T:%04.2f",10.0)));
+           // call();
+
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Test

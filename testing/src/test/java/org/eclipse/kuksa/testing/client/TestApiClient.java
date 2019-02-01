@@ -1,3 +1,15 @@
+/*********************************************************************
+ * Copyright (c)  2019 Assystem GmbH [and others].
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors: Assystem GmbH
+ **********************************************************************/
+
 package org.eclipse.kuksa.testing.client;
 
 import org.apache.logging.log4j.LogManager;
@@ -36,24 +48,24 @@ public class TestApiClient {
 
 	// LOGGING
 	private void logRequest(String url, HttpMethod httpMethod, @Nullable HttpEntity<String> httpEntity) {
-		LOGGER.debug("REQUEST {} {}", httpMethod, url);
+		LOGGER.info("REQUEST {} {}" + httpMethod + url);
 		if (httpEntity != null) {
 			if (httpEntity.getHeaders() != null) {
 				HttpHeaders headers = httpEntity.getHeaders();
-				LOGGER.debug("HEADERS {}", headers);
+				LOGGER.info("HEADERS {}" + headers);
 			}
 			if (httpEntity.hasBody()) {
 				String body = httpEntity.getBody();
-				LOGGER.debug("BODY {}", body);
+				LOGGER.info("BODY {}" + body);
 			}
 		}
 	}
 
 	private void logResponse(ResponseEntity<String> response) {
-		LOGGER.debug("RESPONSE {}", response.getStatusCode());
+		LOGGER.info("RESPONSE {}", response.getStatusCode());
 		if (response.hasBody()) {
 			String body = response.getBody();
-			LOGGER.debug("BODY {}", body);
+			LOGGER.info("BODY {}", body);
 		}
 	}
 

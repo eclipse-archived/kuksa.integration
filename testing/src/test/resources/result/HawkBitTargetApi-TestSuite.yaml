@@ -1,7 +1,7 @@
 testCases:
   testGetTenantInfo:
     results:
-    - url: /default/controller/v1/HMI
+    - url: /default/controller/v1/aatestdev
       httpMethod: GET
       statusCode: '200'
       header: null

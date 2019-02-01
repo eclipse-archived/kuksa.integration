@@ -3,7 +3,7 @@ testCases:
     results:
     - url: /api/1.0/oem
       httpMethod: POST
-      statusCode: 500
+      statusCode: 201
       header: null
       body: null
   testGetOem:
