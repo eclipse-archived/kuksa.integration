@@ -19,6 +19,7 @@ import org.eclipse.kuksa.testing.model.Credentials;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -189,7 +190,7 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
         JSONObject body = new JSONObject(responseEntity.getBody());
         assertNotNull(body);
 
-        assertEquals(4, body.get("total"));
+        assertEquals(8, body.get("total"));
     }
 
     @Test

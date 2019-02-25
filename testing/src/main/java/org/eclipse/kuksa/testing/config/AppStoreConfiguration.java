@@ -28,15 +28,17 @@ public class AppStoreConfiguration {
     private String password;
 
     public String getAddress() {
-        return address;
+        return System.getProperty("appstore_address");
     }
 
     public String getUsername() {
-        return username;
+        return System.getProperty("appstore_username");
+
     }
 
     public String getPassword() {
-        return password;
+        return System.getProperty("appstore_password");
+
     }
 
 }

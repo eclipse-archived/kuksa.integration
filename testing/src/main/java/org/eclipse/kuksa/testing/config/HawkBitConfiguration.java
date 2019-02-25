@@ -15,6 +15,9 @@ package org.eclipse.kuksa.testing.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+
 @Component
 public class HawkBitConfiguration {
 
@@ -41,42 +44,43 @@ public class HawkBitConfiguration {
 	 * @return the address
 	 */
 	public String getAddress() {
-		return address;
+		return System.getProperty("hawkbit_address");
 	}
 
 	/**
 	 * @param address the address to set
 	 */
 	public void setAddress(String address) {
-		this.address = address;
+		System.setProperty("hawkbit_address", address);
 	}
 
 	/**
 	 * @return the username
 	 */
 	public String getUsername() {
-		return username;
+		return System.getProperty("hawkbit_username");
+
 	}
 
 	/**
 	 * @param username the username to set
 	 */
 	public void setUsername(String username) {
-		this.username = username;
+		System.setProperty("hawkbit_username", username);
 	}
 
 	/**
 	 * @return the password
 	 */
-	public String getPassword() {
-		return password;
+	public String getPassword()	{
+		return System.getProperty("hawkbit_password");
 	}
 
 	/**
 	 * @param password the password to set
 	 */
 	public void setPassword(String password) {
-		this.password = password;
+		System.setProperty("hawkbit_password", password);
 	}
 
 }

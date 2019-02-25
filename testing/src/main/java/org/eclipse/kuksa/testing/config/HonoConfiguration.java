@@ -33,29 +33,27 @@ public final class HonoConfiguration {
 	/**
 	 * @return the deviceRegistryStable
 	 */
-	public String getDeviceRegistryStable() {
-		return deviceRegistryStable;
-	}
+	public String getDeviceRegistryStable() { return System.getProperty("hono_device_registry"); }
 
 	/**
 	 * @return the dispatchRouterStable
 	 */
 	public String getDispatchRouterStable() {
-		return dispatchRouterStable;
+		return System.getProperty("hono_dispatch_router");
 	}
 
 	/**
 	 * @return the adapterHttpVertxStable
 	 */
 	public String getAdapterHttpVertxStable() {
-		return adapterHttpVertxStable;
+		return System.getProperty("hono_adapter_http_vertx");
 	}
 
 	/**
 	 * @return the adapterHttpVertxStable
 	 */
 	public String getAdapterMqttVertxStable() {
-		return adapterMqttVertxStable;
+		return System.getProperty("hono_adapter_mqtt_vertx");
 	}
 
 }
