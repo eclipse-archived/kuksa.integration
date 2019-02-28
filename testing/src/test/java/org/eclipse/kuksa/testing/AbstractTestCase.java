@@ -1,5 +1,5 @@
 /*********************************************************************
- * Copyright (c)  2019 Assystem GmbH [and others].
+ * Copyright (c)  2019 Expleo Germany GmbH [and others].
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * Contributors: Assystem GmbH
+ * Contributors: Expleo Germany GmbH
  **********************************************************************/
 
 package org.eclipse.kuksa.testing;
@@ -138,7 +138,7 @@ public abstract class AbstractTestCase {
     protected abstract String getTestFile();
 
     // UTIL
-    protected String buildUrl(String protocol, String baseUrl, String path) {
+    protected static String buildUrl(String protocol, String baseUrl, String path) {
         return new StringBuilder().append(protocol).append(baseUrl).append(path).toString();
     }
 
@@ -146,7 +146,7 @@ public abstract class AbstractTestCase {
         return new StringBuilder().append(protocol).append(baseUrl).append(path).toString();
     }
 
-    protected HttpHeaders getBaseRequestHeaders() {
+    protected static HttpHeaders getBaseRequestHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setContentLanguage(Locale.US);
@@ -204,7 +204,7 @@ public abstract class AbstractTestCase {
         return null;
     }
 
-    protected ResponseEntity<String> executeApiCall(Request request) {
+    protected static ResponseEntity<String> executeApiCall(Request request) {
         return client.executeApiCall(request);
     }
 

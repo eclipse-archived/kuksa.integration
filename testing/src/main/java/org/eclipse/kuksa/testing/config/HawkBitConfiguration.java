@@ -24,13 +24,10 @@ public class HawkBitConfiguration {
 	@Value("${hawkbit.tenant}")
 	private String tenant;
 
-	@Value("${hawkbit.address}")
 	private String address;
 
-	@Value("${hawkbit.username}")
 	private String username;
 
-	@Value("${hawkbit.password}")
 	private String password;
 
 	/**

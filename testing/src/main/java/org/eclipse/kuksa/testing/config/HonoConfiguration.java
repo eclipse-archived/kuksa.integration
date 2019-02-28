@@ -18,41 +18,27 @@ import org.springframework.stereotype.Component;
 @Component
 public final class HonoConfiguration {
 
-	@Value("${HONO_DEVICE_REGISTRY_STABLE}")
-	private String deviceRegistryStable;
-
-	@Value("${HONO_DISPATCH_ROUTER_STABLE}")
-	private String dispatchRouterStable;
-
-	@Value("${HONO_ADAPTER_HTTP_VERTX_STABLE}")
-	private String adapterHttpVertxStable;
-
-	@Value("${HONO_ADAPTER_MQTT_VERTX_STABLE}")
-	private String adapterMqttVertxStable;
-
 	/**
 	 * @return the deviceRegistryStable
 	 */
-	public String getDeviceRegistryStable() { return System.getProperty("hono_device_registry"); }
+	public static String getDeviceRegistryStable() { return System.getProperty("hono_device_registry"); }
 
 	/**
 	 * @return the dispatchRouterStable
 	 */
-	public String getDispatchRouterStable() {
+	public static String getDispatchRouterStable() {
 		return System.getProperty("hono_dispatch_router");
 	}
 
 	/**
 	 * @return the adapterHttpVertxStable
 	 */
-	public String getAdapterHttpVertxStable() {
-		return System.getProperty("hono_adapter_http_vertx");
-	}
+	public static String getAdapterHttpVertxStable() { return System.getProperty("hono_adapter_http_vertx"); }
 
 	/**
 	 * @return the adapterHttpVertxStable
 	 */
-	public String getAdapterMqttVertxStable() {
+	public static String getAdapterMqttVertxStable() {
 		return System.getProperty("hono_adapter_mqtt_vertx");
 	}
 
