@@ -17,43 +17,45 @@ import org.springframework.stereotype.Component;
 
 @Component
 public final class HonoConfiguration {
+	@Value("${hono_device_registry}")
+	private static String hono_device_registry;
 
-	@Value("${HONO_DEVICE_REGISTRY_STABLE}")
-	private String deviceRegistryStable;
+	@Value("${hono_dispatch_router}")
+	private static String hono_dispatch_router;
 
-	@Value("${HONO_DISPATCH_ROUTER_STABLE}")
-	private String dispatchRouterStable;
+	@Value("${hono_adapter_http_vertx}")
+	private static String hono_adapter_http_vertx;
 
-	@Value("${HONO_ADAPTER_HTTP_VERTX_STABLE}")
-	private String adapterHttpVertxStable;
-
-	@Value("${HONO_ADAPTER_MQTT_VERTX_STABLE}")
-	private String adapterMqttVertxStable;
+	@Value("${hono_adapter_mqtt_vertx}")
+	private static String hono_adapter_mqtt_vertx;
 
 	/**
 	 * @return the deviceRegistryStable
 	 */
-	public String getDeviceRegistryStable() { return System.getProperty("hono_device_registry"); }
+	public static String getDeviceRegistryStable() {
+		return System.getProperty("hono_device_registry") == null ? hono_device_registry : System.getProperty("hono_device_registry");
+	}
 
 	/**
 	 * @return the dispatchRouterStable
 	 */
-	public String getDispatchRouterStable() {
-		return System.getProperty("hono_dispatch_router");
+	public static String getDispatchRouterStable() {
+		return System.getProperty("hono_dispatch_router") == null ? hono_dispatch_router : System.getProperty("hono_dispatch_router");
 	}
 
 	/**
 	 * @return the adapterHttpVertxStable
 	 */
-	public String getAdapterHttpVertxStable() {
-		return System.getProperty("hono_adapter_http_vertx");
+	public static String getAdapterHttpVertxStable() {
+		return System.getProperty("hono_adapter_http_vertx") == null ? hono_adapter_http_vertx : System.getProperty("hono_adapter_http_vertx");
 	}
 
 	/**
 	 * @return the adapterHttpVertxStable
 	 */
-	public String getAdapterMqttVertxStable() {
-		return System.getProperty("hono_adapter_mqtt_vertx");
+	public static String getAdapterMqttVertxStable() {
+		return System.getProperty("hono_adapter_mqtt_vertx") == null ? hono_adapter_mqtt_vertx : System.getProperty("hono_adapter_mqtt_vertx");
+
 	}
 
 }

@@ -1,5 +1,5 @@
 /*********************************************************************
- * Copyright (c)  2019 Assystem GmbH [and others].
+ * Copyright (c)  2019 Expleo Germany GmbH [and others].
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * Contributors: Assystem GmbH
+ * Contributors: Expleo Germany GmbH
  **********************************************************************/
 
 package org.eclipse.kuksa.testing;
@@ -181,13 +181,13 @@ public class SmallIntegrationTest extends AbstractTestCase {
 
         Request requestApp = getBaseRequestBuilder()
                 .put()
-                .url(staticBuildUrl(PROTOCOL_HTTP, appstoreAddress, "/api/1.0/app/" + appId))
+                .url(buildUrl(appstoreAddress, "/api/1.0/app/" + appId))
                 .body(new JSONObject(app.toString())
                         .put("installedusers", new JSONArray().put(user))
                 )
                 .build();
 
-        ResponseEntity<String> response2 = staticExecuteApiCall(requestApp);
+        ResponseEntity<String> response2 = executeApiCall(requestApp);
 
         if (!response2.getStatusCode().is2xxSuccessful()) {
             fail("Failed to update app.");
@@ -197,7 +197,7 @@ public class SmallIntegrationTest extends AbstractTestCase {
 
     @Override
     protected String getTestFile() {
-        return "HawkBit-TestSuite.yaml";
+        return "SmallIntegration-TestSuite.yaml";
     }
 
     @Test
@@ -206,7 +206,7 @@ public class SmallIntegrationTest extends AbstractTestCase {
         ResponseResult result = testCase.getResult(0);
 
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, hawkbitConfig.getAddress(), "/" + hawkbitConfig.getTenant() + "/controller/v1/" + deviceId))
+                .url(buildUrl(hawkbitConfig.getAddress(), "/" + hawkbitConfig.getTenant() + "/controller/v1/" + deviceId))
                 .get()
                 .headers(getBaseRequestHeaders())
                 .addHeader("Authorization", "TargetToken " + securityToken)
@@ -220,7 +220,6 @@ public class SmallIntegrationTest extends AbstractTestCase {
 
         String body = responseEntity.getBody();
         assertNotNull(body);
-//        assertEquals(result.getBody(), body);
     }
 
     @Test
@@ -229,7 +228,7 @@ public class SmallIntegrationTest extends AbstractTestCase {
         ResponseResult result = testCase.getResult(0);
 
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, hawkbitConfig.getAddress(), "/" + hawkbitConfig.getTenant() + "/controller/v1/" + deviceId + "/softwaremodules/" + appId + "/artifacts"))
+                .url(buildUrl(hawkbitConfig.getAddress(), "/" + hawkbitConfig.getTenant() + "/controller/v1/" + deviceId + "/softwaremodules/" + appId + "/artifacts"))
                 .get()
                 .headers(getBaseRequestHeaders())
                 .addHeader("Authorization", "TargetToken " + securityToken)
@@ -243,7 +242,6 @@ public class SmallIntegrationTest extends AbstractTestCase {
 
         String body = responseEntity.getBody();
         assertNotNull(body);
-//        assertEquals(result.getBody(), body);
     }
 
     @Test
@@ -251,7 +249,7 @@ public class SmallIntegrationTest extends AbstractTestCase {
         // GIVEN
 
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, hawkbitConfig.getAddress(), "/" + hawkbitConfig.getTenant() + "/controller/v1/" + deviceId + "/softwaremodules"))
+                .url(buildUrl(hawkbitConfig.getAddress(), "/" + hawkbitConfig.getTenant() + "/controller/v1/" + deviceId + "/softwaremodules"))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .build();
@@ -277,15 +275,15 @@ public class SmallIntegrationTest extends AbstractTestCase {
                 );
 
         Request request = new Request.Builder()
-                .url(staticBuildUrl(PROTOCOL_HTTP, appstoreAddress, "/rest/v1/targets"))
+                .url(buildUrl(appstoreAddress, "/rest/v1/targets"))
                 .post()
-                .headers(staticGetBaseRequestHeaders())
+                .headers(getBaseRequestHeaders())
                 .body(requestBody)
                 .credentials(hawkbitCredentials)
                 .build();
 
         // execute request
-        ResponseEntity<String> responseEntity = staticExecuteApiCall(request);
+        ResponseEntity<String> responseEntity = executeApiCall(request);
 
         if (responseEntity.getStatusCodeValue() != HttpStatus.CREATED.value()) {
             fail("Failed to create target.");
@@ -294,27 +292,16 @@ public class SmallIntegrationTest extends AbstractTestCase {
         return responseEntity.getBody();
     }
 
-
-
-
-    /*
-
-
-
-
-
-     */
-
     protected static Request.Builder getBaseRequestBuilder() {
         return new Request.Builder()
-                .headers(staticGetBaseRequestHeaders())
+                .headers(getBaseRequestHeaders())
                 .credentials(hawkbitCredentials);
     }
 
     protected static String createUser() throws JSONException {
         Request request = getBaseRequestBuilder()
                 .post()
-                .url(staticBuildUrl(PROTOCOL_HTTP, appstoreAddress, "/api/1.0/user/"))
+                .url(buildUrl(appstoreAddress, "/api/1.0/user/"))
                 .body(new JSONObject()
                         .put(JSON_PROPERTY_USER_ADMINUSER, JSON_PROPERTY_USER_ADMINUSER_VALUE)
                         .put(JSON_PROPERTY_USER_USERNAME, JSON_PROPERTY_USER_USERNAME_VALUE)
@@ -323,7 +310,7 @@ public class SmallIntegrationTest extends AbstractTestCase {
                 )
                 .build();
 
-        ResponseEntity<String> response = staticExecuteApiCall(request);
+        ResponseEntity<String> response = executeApiCall(request);
         LOGGER.info("JUST CREATED " +  response.getBody());
 
         if (!response.getStatusCode().is2xxSuccessful()) {
@@ -336,10 +323,10 @@ public class SmallIntegrationTest extends AbstractTestCase {
     protected static void removeUser(Long userId) {
         Request request = getBaseRequestBuilder()
                 .delete()
-                .url(staticBuildUrl(PROTOCOL_HTTP, appstoreAddress, "/api/1.0/user/" + userId))
+                .url(buildUrl(appstoreAddress, "/api/1.0/user/" + userId))
                 .build();
 
-        ResponseEntity<String> response = staticExecuteApiCall(request);
+        ResponseEntity<String> response = executeApiCall(request);
 
         if (!response.getStatusCode().is2xxSuccessful()) {
             LOGGER.error(new Exception("Failed to remove app store user."));
@@ -349,13 +336,13 @@ public class SmallIntegrationTest extends AbstractTestCase {
     protected static String createCategory() throws JSONException {
         Request request = getBaseRequestBuilder()
                 .post()
-                .url(staticBuildUrl(PROTOCOL_HTTP, appstoreAddress, "/api/1.0/appcategory/"))
+                .url(buildUrl(appstoreAddress, "/api/1.0/appcategory/"))
                 .body(new JSONObject()
                         .put(JSON_PROPERTY_CATEGORY_NAME, JSON_PROPERTY_CATEGORY_NAME_VALUE)
                 )
                 .build();
 
-        ResponseEntity<String> response = staticExecuteApiCall(request);
+        ResponseEntity<String> response = executeApiCall(request);
         LOGGER.log(Level.INFO, "JUST CREATED " +  response.getBody());
 
         if (!response.getStatusCode().is2xxSuccessful()) {
@@ -368,10 +355,10 @@ public class SmallIntegrationTest extends AbstractTestCase {
     protected static void removeCategory(Long categoryId) {
         Request request = getBaseRequestBuilder()
                 .delete()
-                .url(staticBuildUrl(PROTOCOL_HTTP, appstoreAddress, "/api/1.0/appcategory/" + categoryId))
+                .url(buildUrl(appstoreAddress, "/api/1.0/appcategory/" + categoryId))
                 .build();
 
-        ResponseEntity<String> response = staticExecuteApiCall(request);
+        ResponseEntity<String> response = executeApiCall(request);
 
         if (!response.getStatusCode().is2xxSuccessful()) {
             LOGGER.error(new Exception("Failed to remove app store category."));
@@ -389,7 +376,7 @@ public class SmallIntegrationTest extends AbstractTestCase {
 
         Request request = getBaseRequestBuilder()
                 .post()
-                .url(staticBuildUrl(PROTOCOL_HTTP, appstoreAddress, "/api/1.0/app/"))
+                .url(buildUrl(appstoreAddress, "/api/1.0/app/"))
                 .body(new JSONObject()
                         .put(JSON_PROPERTY_APP_NAME, JSON_PROPERTY_APP_NAME_VALUE)
                         .put(JSON_PROPERTY_APP_VERSION, JSON_PROPERTY_APP_VERSION_VALUE)
@@ -402,7 +389,7 @@ public class SmallIntegrationTest extends AbstractTestCase {
                 )
                 .build();
 
-        ResponseEntity<String> response = staticExecuteApiCall(request);
+        ResponseEntity<String> response = executeApiCall(request);
         System.out.println("JUST CREATED " +  response.getBody());
 
         if (!response.getStatusCode().is2xxSuccessful()) {
@@ -414,10 +401,10 @@ public class SmallIntegrationTest extends AbstractTestCase {
     protected static String removeApp(Long appId) {
         Request request = getBaseRequestBuilder()
                 .delete()
-                .url(staticBuildUrl(PROTOCOL_HTTP, appstoreAddress, "/api/1.0/app/" + appId))
+                .url(buildUrl(appstoreAddress, "/api/1.0/app/" + appId))
                 .build();
 
-        ResponseEntity<String> response = staticExecuteApiCall(request);
+        ResponseEntity<String> response = executeApiCall(request);
 
         if (!response.getStatusCode().is2xxSuccessful()) {
             LOGGER.error(new Exception("Failed to remove app store app."));

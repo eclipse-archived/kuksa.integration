@@ -1,5 +1,5 @@
 /*********************************************************************
- * Copyright (c)  2019 Assystem GmbH [and others].
+ * Copyright (c)  2019 Expleo Germany GmbH [and others].
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -7,13 +7,13 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * Contributors: Assystem GmbH
+ * Contributors: Expleo Germany GmbH
  **********************************************************************/
 
 package org.eclipse.kuksa.testing;
 
 import org.eclipse.kuksa.testing.client.Request;
-import org.eclipse.kuksa.testing.client.TestApiClient;
+import org.eclipse.kuksa.testing.client.TestApiRunner;
 import org.eclipse.kuksa.testing.model.TestCase;
 import org.eclipse.kuksa.testing.model.TestSuite;
 import org.eclipse.kuksa.testing.model.YamlConverter;
@@ -43,6 +43,7 @@ import static org.junit.Assert.fail;
  * the same directory.
  *
  * @author cnguyen
+ * @author azorin
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestPropertySource({"classpath:application.properties", "classpath:local.properties"})
@@ -55,7 +56,7 @@ public abstract class AbstractTestCase {
 
     public static final Logger LOGGER = LogManager.getLogger();
 
-    private static TestApiClient client = new TestApiClient();
+    private static TestApiRunner runner = new TestApiRunner();
 
     @Rule
     public TestName testName = new TestName();
@@ -103,23 +104,7 @@ public abstract class AbstractTestCase {
 
         LOGGER.debug("CELANUP END");
     }
-/*
-    @AfterClass
-    public final void afterCleanup() throws Exception {
-        integrationCleanup();
-    }
-    @BeforeClass
-    public final void beforeSetup() throws Exception {
-        integrationSetup();
-    }
 
-    protected void integrationCleanup() {
-
-    }
-    protected void integrationSetup() throws Exception {
-
-    }
-*/
     protected void testSetup() throws Exception {
         // override if necessary
     }
@@ -138,15 +123,15 @@ public abstract class AbstractTestCase {
     protected abstract String getTestFile();
 
     // UTIL
-    protected String buildUrl(String protocol, String baseUrl, String path) {
-        return new StringBuilder().append(protocol).append(baseUrl).append(path).toString();
+    protected static String buildUrl(String baseUrl, String path) {
+        return new StringBuilder().append(baseUrl).append(path).toString();
     }
 
-    protected static String staticBuildUrl(String protocol, String baseUrl, String path) {
-        return new StringBuilder().append(protocol).append(baseUrl).append(path).toString();
+    protected static String staticBuildUrl(String baseUrl, String path) {
+        return new StringBuilder().append(baseUrl).append(path).toString();
     }
 
-    protected HttpHeaders getBaseRequestHeaders() {
+    protected static HttpHeaders getBaseRequestHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setContentLanguage(Locale.US);
@@ -190,7 +175,7 @@ public abstract class AbstractTestCase {
         byte[] payload = value.getBytes();
         MqttMessage msg = new MqttMessage(payload);
         msg.setQos(0);
-        msg.setRetained(true);
+        msg.setRetained(false);
         return msg;
     }
 
@@ -204,12 +189,12 @@ public abstract class AbstractTestCase {
         return null;
     }
 
-    protected ResponseEntity<String> executeApiCall(Request request) {
-        return client.executeApiCall(request);
+    protected static ResponseEntity<String> executeApiCall(Request request) {
+        return runner.executeApiCall(request);
     }
 
     protected static ResponseEntity<String> staticExecuteApiCall(Request request) {
-        return client.executeApiCall(request);
+        return runner.executeApiCall(request);
     }
 
 }

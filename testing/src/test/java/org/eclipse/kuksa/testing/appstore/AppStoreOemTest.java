@@ -1,5 +1,5 @@
 /*********************************************************************
- * Copyright (c)  2019 Assystem GmbH [and others].
+ * Copyright (c)  2019 Expleo Germany GmbH [and others].
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * Contributors: Assystem GmbH
+ * Contributors: Expleo Germany GmbH
  **********************************************************************/
 
 package org.eclipse.kuksa.testing.appstore;
@@ -47,7 +47,7 @@ public class AppStoreOemTest extends AbstractAppStoreTest {
     private String createOem() throws JSONException {
         Request request = getBaseRequestBuilder()
                 .post()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/oem/"))
+                .url(buildUrl(address, "/api/1.0/oem/"))
                 .body(new JSONObject()
                         .put(JSON_PROPERTY_NAME, JSON_PROPERTY_NAME_VALUE)
                 )
@@ -71,7 +71,7 @@ public class AppStoreOemTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .post()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/oem/"))
+                .url(buildUrl(address, "/api/1.0/oem/"))
                 .body(new JSONObject()
                         .put(JSON_PROPERTY_NAME, oem)
                 )
@@ -106,7 +106,7 @@ public class AppStoreOemTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .get()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/oem/" + oemId))
+                .url(buildUrl(address, "/api/1.0/oem/" + oemId))
                 .build();
 
         // WHEN

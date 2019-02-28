@@ -1,5 +1,5 @@
 /*********************************************************************
- * Copyright (c)  2019 Assystem GmbH [and others].
+ * Copyright (c)  2019 Expleo Germany GmbH [and others].
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * Contributors: Assystem GmbH
+ * Contributors: Expleo Germany GmbH
  **********************************************************************/
 
 package org.eclipse.kuksa.testing.model;
@@ -15,8 +15,8 @@ package org.eclipse.kuksa.testing.model;
 import java.util.List;
 
 public class TestCase {
-
 	private List<ResponseResult> results;
+	private List<TestData> testData;
 
 	/**
 	 * @return the results
@@ -40,8 +40,26 @@ public class TestCase {
 		return results != null && results.size() != 0 && index < results.size() && index >= 0;
 	}
 
-	private List<TestData> testData;
+	/**
+	 * @return all testData
+	 */
+	public List<TestData> getTestData() {
+		return testData;
+	}
 
+	/**
+	 * set the testData
+	 * @param testData
+	 */
+	public void setTestData(List<TestData> testData) {
+		this.testData = testData;
+	}
+
+	/**
+	 *
+	 * @param index to get the testData
+	 * @return
+	 */
 	public TestData getTestData(int index) { return hasTestData(index) ? testData.get(index) : null; }
 
 	public boolean hasTestData(int index) {

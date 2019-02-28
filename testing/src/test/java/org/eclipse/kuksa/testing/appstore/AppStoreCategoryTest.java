@@ -1,5 +1,5 @@
 /*********************************************************************
- * Copyright (c)  2019 Assystem GmbH [and others].
+ * Copyright (c)  2019 Expleo Germany GmbH [and others].
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * Contributors: Assystem GmbH
+ * Contributors: Expleo Germany GmbH
  **********************************************************************/
 
 package  org.eclipse.kuksa.testing.appstore;
@@ -58,7 +58,7 @@ public class AppStoreCategoryTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .post()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/appcategory/"))
+                .url(buildUrl(address, "/api/1.0/appcategory/"))
                 .body(new JSONObject()
                         .put(JSON_PROPERTY_CATEGORY_NAME, category)
                 )
@@ -91,7 +91,7 @@ public class AppStoreCategoryTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .get()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/appcategory/" + categoryId))
+                .url(buildUrl(address, "/api/1.0/appcategory/" + categoryId))
                 .build();
 
         // WHEN
@@ -117,7 +117,7 @@ public class AppStoreCategoryTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .put()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/appcategory/" + categoryId))
+                .url(buildUrl(address, "/api/1.0/appcategory/" + categoryId))
                 .body(new JSONObject()
                         .put(JSON_PROPERTY_CATEGORY_NAME, newCategoryName)
                 )
@@ -145,7 +145,7 @@ public class AppStoreCategoryTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .delete()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/appcategory/" + categoryId))
+                .url(buildUrl(address, "/api/1.0/appcategory/" + categoryId))
                 .build();
 
         // WHEN
@@ -166,7 +166,7 @@ public class AppStoreCategoryTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .get()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/appcategory"))
+                .url(buildUrl(address, "/api/1.0/appcategory"))
                 .build();
 
         // WHEN
@@ -178,8 +178,6 @@ public class AppStoreCategoryTest extends AbstractAppStoreTest {
 
         JSONObject body = new JSONObject(response.getBody());
         assertNotNull(body);
-
-        assertEquals(1, body.getInt("totalElements"));
     }
 
 }

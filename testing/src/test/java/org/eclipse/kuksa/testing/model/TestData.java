@@ -1,5 +1,5 @@
 /*********************************************************************
- * Copyright (c)  2019 Assystem GmbH [and others].
+ * Copyright (c)  2019 Expleo Germany GmbH [and others].
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * Contributors: Assystem GmbH
+ * Contributors: Expleo Germany GmbH
  **********************************************************************/
 
 package org.eclipse.kuksa.testing.model;
@@ -16,19 +16,18 @@ import java.util.Map;
 
 public class TestData {
 
-    private String ip;
+    /**
+     * HONO
+     */
+    private String tenantId;
 
-    private String port;
+    private String deviceId;
 
-    private String tenantID;
+    private String authId;
 
-    private String deviceID;
-
-    private String authID;
+    private String username;
 
     private String password;
-
-    private int statusCode;
 
     private String token;
 
@@ -36,8 +35,58 @@ public class TestData {
 
     private String body;
 
-    private String username;
+    /**
+     * Appstore
+     */
 
     private String appname;
+
+    /**
+     * HawkBit
+     */
+    private String controllerId;
+
+    private String description;
+
+    private String name;
+
+    private String target;
+
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public String getAuthId() {
+        return authId;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public Map<String, String> getHeader() {
+        return header;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getAppname() {
+        return appname;
+    }
 
 }

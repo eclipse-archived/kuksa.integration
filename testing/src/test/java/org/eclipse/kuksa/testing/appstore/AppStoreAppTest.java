@@ -1,5 +1,5 @@
 /*********************************************************************
- * Copyright (c)  2019 Assystem GmbH [and others].
+ * Copyright (c)  2019 Expleo Germany GmbH [and others].
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * Contributors: Assystem GmbH
+ * Contributors: Expleo Germany GmbH
  **********************************************************************/
 
 package  org.eclipse.kuksa.testing.appstore;
@@ -69,7 +69,7 @@ public class AppStoreAppTest extends AbstractAppStoreTest {
 
         Request requestApp = getBaseRequestBuilder()
                 .put()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/app/" + appId))
+                .url(buildUrl(address, "/api/1.0/app/" + appId))
                 .body(new JSONObject(app.toString())
                         .put("installedusers", new JSONArray().put(user))
                 )
@@ -108,7 +108,7 @@ public class AppStoreAppTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .post()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/app/"))
+                .url(buildUrl(address, "/api/1.0/app/"))
                 .body(new JSONObject()
                         .put(JSON_PROPERTY_APP_NAME, name)
                         .put(JSON_PROPERTY_APP_VERSION, version)
@@ -150,7 +150,7 @@ public class AppStoreAppTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .get()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/app/" + appId))
+                .url(buildUrl(address, "/api/1.0/app/" + appId))
                 .build();
 
         // WHEN
@@ -172,7 +172,7 @@ public class AppStoreAppTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .get()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/app"))
+                .url(buildUrl(address, "/api/1.0/app"))
                 .build();
 
         // WHEN
@@ -184,7 +184,6 @@ public class AppStoreAppTest extends AbstractAppStoreTest {
 
         JSONObject body = new JSONObject(response.getBody());
         assertNotNull(body);
-        assertEquals(1, body.getInt("totalElements"));
     }
 
     @Test
@@ -196,7 +195,7 @@ public class AppStoreAppTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .put()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/app/" + appId))
+                .url(buildUrl(address, "/api/1.0/app/" + appId))
                 .body(new JSONObject(app.toString())
                         .put(JSON_PROPERTY_APP_DESCRIPTION, newDescription)
                 )
@@ -224,7 +223,7 @@ public class AppStoreAppTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .delete()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/app/" + appId))
+                .url(buildUrl(address, "/api/1.0/app/" + appId))
                 .build();
 
         // WHEN
@@ -243,7 +242,7 @@ public class AppStoreAppTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .get()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/app/installed/user/" + userId))
+                .url(buildUrl(address, "/api/1.0/app/installed/user/" + userId))
                 .build();
 
         // WHEN
@@ -266,7 +265,7 @@ public class AppStoreAppTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .get()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/app/" + appId))
+                .url(buildUrl(address, "/api/1.0/app/" + appId))
                 .build();
 
         // WHEN
@@ -289,7 +288,7 @@ public class AppStoreAppTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .get()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/app/installed/user/" + userId + "/" + appName))
+                .url(buildUrl(address, "/api/1.0/app/installed/user/" + userId + "/" + appName))
                 .build();
 
         // WHEN
@@ -311,7 +310,7 @@ public class AppStoreAppTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .get()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/app/category/" + categoryId))
+                .url(buildUrl(address, "/api/1.0/app/category/" + categoryId))
                 .build();
 
         // WHEN
@@ -335,7 +334,7 @@ public class AppStoreAppTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .get()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/app/category/" + categoryId + "/" + appName))
+                .url(buildUrl(address, "/api/1.0/app/category/" + categoryId + "/" + appName))
                 .build();
 
         // WHEN
@@ -357,7 +356,7 @@ public class AppStoreAppTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .post()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/app/" + appId + "/purchase/" + userId))
+                .url(buildUrl(address, "/api/1.0/app/" + appId + "/purchase/" + userId))
                 .build();
 
         // WHEN
