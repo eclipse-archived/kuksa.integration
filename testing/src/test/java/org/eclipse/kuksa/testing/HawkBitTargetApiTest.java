@@ -1,5 +1,5 @@
 /*********************************************************************
- * Copyright (c)  2019 Assystem GmbH [and others].
+ * Copyright (c)  2019 Expleo Germany GmbH [and others].
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * Contributors: Assystem GmbH
+ *  * Contributors: Expleo Germany GmbH
  **********************************************************************/
 
 package org.eclipse.kuksa.testing;
@@ -19,6 +19,7 @@ import org.eclipse.kuksa.testing.model.Credentials;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -189,7 +190,7 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
         JSONObject body = new JSONObject(responseEntity.getBody());
         assertNotNull(body);
 
-        assertEquals(4, body.get("total"));
+        assertEquals(8, body.get("total"));
     }
 
     @Test

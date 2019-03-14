@@ -1,5 +1,5 @@
 /*********************************************************************
- * Copyright (c)  2019 Assystem GmbH [and others].
+ * Copyright (c)  2019 Expleo Germany GmbH [and others].
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * Contributors: Assystem GmbH
+ * Contributors: Expleo Germany GmbH
  **********************************************************************/
 
 package org.eclipse.kuksa.testing;
@@ -22,9 +22,7 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
+import org.junit.*;
 import org.junit.rules.TestName;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.RunWith;
@@ -57,7 +55,7 @@ public abstract class AbstractTestCase {
 
     public static final Logger LOGGER = LogManager.getLogger();
 
-    private TestApiClient client = new TestApiClient();
+    private static TestApiClient client = new TestApiClient();
 
     @Rule
     public TestName testName = new TestName();
@@ -99,13 +97,29 @@ public abstract class AbstractTestCase {
     @After
     public final void cleanup() throws Exception {
         LOGGER.debug("CLEANUP START");
-
+        System.out.println("cleaning UP");
         // individual test setup
         testCleanup();
 
         LOGGER.debug("CELANUP END");
     }
+/*
+    @AfterClass
+    public final void afterCleanup() throws Exception {
+        integrationCleanup();
+    }
+    @BeforeClass
+    public final void beforeSetup() throws Exception {
+        integrationSetup();
+    }
 
+    protected void integrationCleanup() {
+
+    }
+    protected void integrationSetup() throws Exception {
+
+    }
+*/
     protected void testSetup() throws Exception {
         // override if necessary
     }
@@ -113,6 +127,8 @@ public abstract class AbstractTestCase {
     protected void testCleanup() throws Exception {
         // override if necessary
     }
+
+
 
     /**
      * Returns the location to a file which contains test results.
@@ -122,11 +138,23 @@ public abstract class AbstractTestCase {
     protected abstract String getTestFile();
 
     // UTIL
-    protected String buildUrl(String protocol, String baseUrl, String path) {
+    protected static String buildUrl(String protocol, String baseUrl, String path) {
         return new StringBuilder().append(protocol).append(baseUrl).append(path).toString();
     }
 
-    protected HttpHeaders getBaseRequestHeaders() {
+    protected static String staticBuildUrl(String protocol, String baseUrl, String path) {
+        return new StringBuilder().append(protocol).append(baseUrl).append(path).toString();
+    }
+
+    protected static HttpHeaders getBaseRequestHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setContentLanguage(Locale.US);
+
+        return headers;
+    }
+
+    protected static HttpHeaders staticGetBaseRequestHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setContentLanguage(Locale.US);
@@ -176,7 +204,11 @@ public abstract class AbstractTestCase {
         return null;
     }
 
-    protected ResponseEntity<String> executeApiCall(Request request) {
+    protected static ResponseEntity<String> executeApiCall(Request request) {
+        return client.executeApiCall(request);
+    }
+
+    protected static ResponseEntity<String> staticExecuteApiCall(Request request) {
         return client.executeApiCall(request);
     }
 

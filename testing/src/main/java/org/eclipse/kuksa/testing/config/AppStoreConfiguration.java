@@ -18,25 +18,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class AppStoreConfiguration {
 
-    @Value("${appstore.address}")
-    private String address;
-
-    @Value("${appstore.username}")
-    private String username;
-
-    @Value("${appstore.password}")
-    private String password;
-
     public String getAddress() {
-        return address;
+        return System.getProperty("appstore_address");
     }
 
     public String getUsername() {
-        return username;
+        return System.getProperty("appstore_username");
+
     }
 
     public String getPassword() {
-        return password;
+        return System.getProperty("appstore_password");
+
     }
 
 }
