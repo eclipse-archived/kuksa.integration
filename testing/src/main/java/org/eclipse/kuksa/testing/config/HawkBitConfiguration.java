@@ -20,14 +20,13 @@ import java.nio.charset.Charset;
 
 @Component
 public class HawkBitConfiguration {
-
 	@Value("${hawkbit.tenant}")
 	private String tenant;
-
+	@Value("${hawkbit.address}")
 	private String address;
-
+	@Value("${hawkbit.username}")
 	private String username;
-
+	@Value("${hawkbit.password}")
 	private String password;
 
 	/**
@@ -41,7 +40,7 @@ public class HawkBitConfiguration {
 	 * @return the address
 	 */
 	public String getAddress() {
-		return System.getProperty("hawkbit_address");
+		return System.getProperty("hawkbit_address") == null ? address : System.getProperty("hawkbit_address");
 	}
 
 	/**
@@ -55,7 +54,7 @@ public class HawkBitConfiguration {
 	 * @return the username
 	 */
 	public String getUsername() {
-		return System.getProperty("hawkbit_username");
+		return System.getProperty("hawkbit_username") == null ? username : System.getProperty("hawkbit_username");
 
 	}
 
@@ -70,7 +69,7 @@ public class HawkBitConfiguration {
 	 * @return the password
 	 */
 	public String getPassword()	{
-		return System.getProperty("hawkbit_password");
+		return System.getProperty("hawkbit_password") == null ? password : System.getProperty("hawkbit_password");
 	}
 
 	/**
@@ -78,6 +77,7 @@ public class HawkBitConfiguration {
 	 */
 	public void setPassword(String password) {
 		System.setProperty("hawkbit_password", password);
+
 	}
 
 }

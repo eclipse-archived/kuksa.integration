@@ -4,7 +4,7 @@ pipeline {
         stage ("Test") {
             steps {
                 git 'https://github.com/eclipse/kuksa.integration.git'
-                sh """testing && \
+                sh """cd testing && \
                 mvn test -Dhono_device_registry=${hono_device_registry}  \
                 -Dhono_dispatch_router=${hono_dispatch_router}  \
                 -Dhono_adapter_http_vertx=${hono_adapter_http_vertx} \

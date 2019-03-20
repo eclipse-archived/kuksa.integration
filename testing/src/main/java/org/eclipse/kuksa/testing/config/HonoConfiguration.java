@@ -17,29 +17,45 @@ import org.springframework.stereotype.Component;
 
 @Component
 public final class HonoConfiguration {
+	@Value("${hono_device_registry}")
+	private static String hono_device_registry;
+
+	@Value("${hono_dispatch_router}")
+	private static String hono_dispatch_router;
+
+	@Value("${hono_adapter_http_vertx}")
+	private static String hono_adapter_http_vertx;
+
+	@Value("${hono_adapter_mqtt_vertx}")
+	private static String hono_adapter_mqtt_vertx;
 
 	/**
 	 * @return the deviceRegistryStable
 	 */
-	public static String getDeviceRegistryStable() { return System.getProperty("hono_device_registry"); }
+	public static String getDeviceRegistryStable() {
+		return System.getProperty("hono_device_registry") == null ? hono_device_registry : System.getProperty("hono_device_registry");
+	}
 
 	/**
 	 * @return the dispatchRouterStable
 	 */
 	public static String getDispatchRouterStable() {
-		return System.getProperty("hono_dispatch_router");
+		return System.getProperty("hono_dispatch_router") == null ? hono_dispatch_router : System.getProperty("hono_dispatch_router");
 	}
 
 	/**
 	 * @return the adapterHttpVertxStable
 	 */
-	public static String getAdapterHttpVertxStable() { return System.getProperty("hono_adapter_http_vertx"); }
+	public static String getAdapterHttpVertxStable() {
+		return System.getProperty("hono_adapter_http_vertx") == null ? hono_adapter_http_vertx : System.getProperty("hono_adapter_http_vertx");
+	}
 
 	/**
 	 * @return the adapterHttpVertxStable
 	 */
 	public static String getAdapterMqttVertxStable() {
-		return System.getProperty("hono_adapter_mqtt_vertx");
+		return System.getProperty("hono_adapter_mqtt_vertx") == null ? hono_adapter_mqtt_vertx : System.getProperty("hono_adapter_mqtt_vertx");
+
 	}
 
 }

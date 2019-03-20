@@ -16,6 +16,7 @@ import org.eclipse.kuksa.testing.client.Request;
 import org.eclipse.kuksa.testing.config.GlobalConfiguration;
 import org.eclipse.kuksa.testing.config.HawkBitConfiguration;
 import org.eclipse.kuksa.testing.model.Credentials;
+import org.eclipse.kuksa.testing.model.ResponseResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,7 +63,6 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
         JSONObject body = new JSONObject(element);
 
         controllerId = body.getString("controllerId");
-
     }
 
     private String createTarget() throws JSONException {
@@ -148,9 +148,10 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
 
         // WHEN
         ResponseEntity<String> responseEntity = executeApiCall(request);
+        ResponseResult result = testCase.getResult(0);
 
         // THEN
-        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+        assertEquals(result.getStatusCode(), responseEntity.getStatusCodeValue());
 
         JSONArray jsonArray = new JSONArray(responseEntity.getBody());
         assertNotNull(jsonArray);
@@ -189,8 +190,6 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
 
         JSONObject body = new JSONObject(responseEntity.getBody());
         assertNotNull(body);
-
-        assertEquals(8, body.get("total"));
     }
 
     @Test
@@ -225,9 +224,10 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
 
         // WHEN
         ResponseEntity<String> responseEntity = executeApiCall(request);
+        ResponseResult result = testCase.getResult(0);
 
         // THEN
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(result.getStatusCode(), responseEntity.getStatusCodeValue());
 
         JSONObject body = new JSONObject(responseEntity.getBody());
         assertNotNull(body);
@@ -253,9 +253,10 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
 
         // WHEN
         ResponseEntity<String> responseEntity = executeApiCall(request);
+        ResponseResult result = testCase.getResult(0);
 
         // THEN
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(result.getStatusCode(), responseEntity.getStatusCodeValue());
 
         JSONObject body = new JSONObject(responseEntity.getBody());
         assertNotNull(body);
@@ -276,9 +277,10 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
 
         // WHEN
         ResponseEntity<String> responseEntity = executeApiCall(request);
+        ResponseResult result = testCase.getResult(0);
 
         // THEN
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(result.getStatusCode(), responseEntity.getStatusCodeValue());
 
         JSONObject body = new JSONObject(responseEntity.getBody());
         assertNotNull(body);
