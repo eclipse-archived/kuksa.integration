@@ -13,7 +13,7 @@
 package org.eclipse.kuksa.testing;
 
 import org.eclipse.kuksa.testing.client.Request;
-import org.eclipse.kuksa.testing.client.TestApiClient;
+import org.eclipse.kuksa.testing.client.TestApiRunner;
 import org.eclipse.kuksa.testing.model.TestCase;
 import org.eclipse.kuksa.testing.model.TestSuite;
 import org.eclipse.kuksa.testing.model.YamlConverter;
@@ -55,7 +55,7 @@ public abstract class AbstractTestCase {
 
     public static final Logger LOGGER = LogManager.getLogger();
 
-    private static TestApiClient client = new TestApiClient();
+    private static TestApiRunner runner = new TestApiRunner();
 
     @Rule
     public TestName testName = new TestName();
@@ -103,23 +103,7 @@ public abstract class AbstractTestCase {
 
         LOGGER.debug("CELANUP END");
     }
-/*
-    @AfterClass
-    public final void afterCleanup() throws Exception {
-        integrationCleanup();
-    }
-    @BeforeClass
-    public final void beforeSetup() throws Exception {
-        integrationSetup();
-    }
 
-    protected void integrationCleanup() {
-
-    }
-    protected void integrationSetup() throws Exception {
-
-    }
-*/
     protected void testSetup() throws Exception {
         // override if necessary
     }
@@ -190,7 +174,7 @@ public abstract class AbstractTestCase {
         byte[] payload = value.getBytes();
         MqttMessage msg = new MqttMessage(payload);
         msg.setQos(0);
-        msg.setRetained(true);
+        msg.setRetained(false);
         return msg;
     }
 
@@ -205,11 +189,11 @@ public abstract class AbstractTestCase {
     }
 
     protected static ResponseEntity<String> executeApiCall(Request request) {
-        return client.executeApiCall(request);
+        return runner.executeApiCall(request);
     }
 
     protected static ResponseEntity<String> staticExecuteApiCall(Request request) {
-        return client.executeApiCall(request);
+        return runner.executeApiCall(request);
     }
 
 }

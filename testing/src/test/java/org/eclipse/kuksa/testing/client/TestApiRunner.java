@@ -23,7 +23,7 @@ import org.springframework.web.client.RestTemplate;
 
 import org.eclipse.kuksa.testing.model.Credentials;
 
-public class TestApiClient {
+public class TestApiRunner {
 
 	public static final Logger LOGGER = LogManager.getLogger();
 

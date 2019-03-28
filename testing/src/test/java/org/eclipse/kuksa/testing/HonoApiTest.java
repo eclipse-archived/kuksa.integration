@@ -17,6 +17,7 @@ import org.eclipse.kuksa.testing.config.GlobalConfiguration;
 import org.eclipse.kuksa.testing.config.HonoConfiguration;
 import org.eclipse.kuksa.testing.model.Credentials;
 import org.eclipse.kuksa.testing.model.ResponseResult;
+import org.eclipse.kuksa.testing.model.TestData;
 import org.eclipse.paho.client.mqttv3.*;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,9 +46,11 @@ public class HonoApiTest extends AbstractTestCase {
 
     private static final String PATH_REGISTRATION = "/registration/";
 
-    private static final String PATH_CONTROL = "/rover/1/RoverDriving/control/";
+    private static final String PATH_CONTROL = "control/+/+/req/#"; // "/rover/1/RoverDriving/control";
 
-    private static final String PATH_MQTT_TELEMETRY = "rover/1/telemetry";
+
+    private static final String PATH_MQTT_TELEMETRY = "/rover/1/telemetry";
+
 
     private static final String PATH_HTTP_TELEMETRY = "/telemetry";
 
@@ -59,11 +62,77 @@ public class HonoApiTest extends AbstractTestCase {
     private static String tenant_id = "ASSYSTEM_TENANT4";
     private static String device_id = "assystem2";
 
+    private static IMqttClient client;
+
     @BeforeClass
     public static void setup() throws JSONException, NoSuchAlgorithmException {
         createTenant(tenant_id);
         createDevice(tenant_id, device_id);
         createCredentials();
+
+        // publish
+        String publisherId = UUID.randomUUID().toString();
+        try {
+            client = new MqttClient(PROTOCOL_TCP + config.getAdapterMqttVertxStable(), publisherId);
+
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setAutomaticReconnect(true);
+            options.setCleanSession(true);
+//            options.setUserName("assystem2@ASSYSTEM_TENANT4");
+//            options.setPassword("whySoSecret".toCharArray());
+            options.setUserName("sensor1@TENANT5");
+            options.setPassword("hashdis".toCharArray());
+            options.setConnectionTimeout(10);
+            // actually connect the client
+            client.connect(options);
+
+            // receive
+            client.setCallback(new MqttCallback() {
+                @Override
+                public void connectionLost(Throwable throwable) {
+                    LOGGER.info("MQTT Error - Connection lost", throwable);
+                }
+
+                @Override
+                public void messageArrived(String s, MqttMessage mqttMessage) {
+                    System.out.println("MQTT Message arrived successfully: " + mqttMessage);
+                    assertNotNull(mqttMessage.getPayload());
+                }
+
+                @Override
+                public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+                    try {
+                        System.out.println("MQTT Message delivery completed " + iMqttDeliveryToken.getMessage());
+                    } catch (MqttException e) {
+                        e.printStackTrace();
+                    }
+                    assertEquals(true, iMqttDeliveryToken.isComplete());
+                }
+            });
+
+            CountDownLatch receivedSignal = new CountDownLatch(10);
+//
+//            client.subscribe(PATH_MQTT_TELEMETRY, (topic, msg) -> {
+//                receivedSignal.countDown();
+//                System.out.println("Something arrived: at " + PATH_MQTT_TELEMETRY + msg.toString());
+//            });
+
+            client.subscribe(PATH_CONTROL, (topic, msg) -> {
+                receivedSignal.countDown();
+                System.out.println("Something arrived at : " + PATH_CONTROL + msg.toString());
+
+            });
+
+            receivedSignal.await(10, TimeUnit.SECONDS);
+
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+            System.out.println("MQTT Interrupt");
+        }
+
     }
 
     @AfterClass
@@ -80,8 +149,6 @@ public class HonoApiTest extends AbstractTestCase {
 
     public static void createTenant(String tenant) throws JSONException {
         // GIVEN
-
-        System.out.println("print: " + config.getDeviceRegistryStable());
 
         Request request = new Request.Builder()
                 .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(), PATH_TENANT))
@@ -125,7 +192,6 @@ public class HonoApiTest extends AbstractTestCase {
         ResponseEntity<String> responseEntity = executeApiCall(request);
 
         System.out.println("removeTenant" + responseEntity);
-
     }
 
     public static void removeDevice(String tenant, String device) {
@@ -146,10 +212,10 @@ public class HonoApiTest extends AbstractTestCase {
     @Test
     public void testGetTenantInfo() {
         // GIVEN
-        String tenantId = "ASSYSTEM_TENANT4";
+        TestData testData = testCase.getTestData(0);;
 
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(), PATH_TENANT + tenantId))
+                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(), PATH_TENANT + testData.getTenantId()))
                 .get()
                 .headers(getBaseRequestHeaders())
                 .build();
@@ -167,182 +233,130 @@ public class HonoApiTest extends AbstractTestCase {
 
         assertEquals(result.getBody(), body.toString());
 
-        assertEquals(tenantId, getJsonValue(body, "tenant-id"));
+        assertEquals(testData.getTenantId(), getJsonValue(body, "tenant-id"));
     }
 
     @Test
     public void testGetDeviceInfo() {
+
+        TestData testData = testCase.getTestData(0);;
+
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(), PATH_REGISTRATION + tenant_id +"/" + device_id))
+                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(), PATH_REGISTRATION + testData.getTenantId() +"/" + testData.getDeviceId()))
                 .get()
                 .headers(getBaseRequestHeaders())
                 .build();
 
         // WHEN
         ResponseEntity<String> responseEntity = executeApiCall(request);
+        ResponseResult result = testCase.getResult(0);
 
         // THEN
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(result.getStatusCode(), responseEntity.getStatusCodeValue());
 
         JSONObject body = getBodyAsJson(responseEntity);
         assertNotNull(body);
 
-        assertEquals(device_id, getJsonValue(body, "device-id"));
+        assertEquals(testData.getDeviceId(), getJsonValue(body, "device-id"));
     }
 
     @Test
     public void testPostTenantInfo() throws JSONException {
-        String tenant = "ASSYSTEM_TENANT";
+        TestData testData = testCase.getTestData(0);
         // GIVEN
         Request request = new Request.Builder()
                 .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(), PATH_TENANT))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(new JSONObject()
-                        .put("tenant-id", tenant))
+                        .put("tenant-id", testData.getTenantId()))
                 .build();
 
         // WHEN
         ResponseEntity<String> responseEntity = executeApiCall(request);
+        ResponseResult result = testCase.getResult(0);
 
         // THEN
-        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+        assertEquals(result.getStatusCode(), responseEntity.getStatusCodeValue());
 
-    //    JSONObject body = getBodyAsJson(responseEntity);
-    //    assertNotNull(body);
-
-        removeTenant(tenant);
+        removeTenant(testData.getTenantId());
     }
 
     @Test
     public void testPostDeviceInfo() throws JSONException {
-        String tenant = "DEFAULT_TENANT";
-        String device = "assystem1";
+        TestData testData = testCase.getTestData(0);
 
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(), PATH_REGISTRATION + tenant))
+                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(), PATH_REGISTRATION + testData.getTenantId()))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(new JSONObject()
-                        .put("device-id", device))
+                        .put("device-id", testData.getDeviceId()))
                 .build();
 
         // WHEN
         ResponseEntity<String> responseEntity = executeApiCall(request);
+        ResponseResult result = testCase.getResult(0);
 
         // THEN
-        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+        assertEquals(result.getStatusCode(), responseEntity.getStatusCodeValue());
 
-        removeDevice(tenant, device);
- //       JSONObject body = getBodyAsJson(responseEntity);
- //       assertNotNull(body);
+        removeDevice(testData.getTenantId(), testData.getDeviceId());
     }
 
     @Test
     public void testPostTelemetryData() throws JSONException {
-        // GIVEN
-        String username = "assystem2@ASSYSTEM_TENANT4";
-        String password = "whySoSecret";
+        TestData testData = testCase.getTestData(0);
 
+        // GIVEN
         Request request = new Request.Builder()
                 .url(buildUrl(PROTOCOL_HTTP, config.getAdapterHttpVertxStable(), PATH_HTTP_TELEMETRY))
                 .post()
                 .headers(getBaseRequestHeaders())
-                .body(new JSONObject()
-                        .put("temperature", "5"))
-                .credentials(new Credentials(username, password))
+                .body(testData.getBody())
+                .credentials(new Credentials(testData.getUsername(), testData.getPassword()))
                 .build();
 
         // WHEN
         ResponseEntity<String> response = executeApiCall(request);
+        ResponseResult result = testCase.getResult(0);
 
         // THEN
-        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
-
-//		JSONObject body = getBodyAsJson(response);
-//		assertNotNull(body);
+        assertEquals(result.getStatusCode(), response.getStatusCodeValue());
     }
 
     @Test
-    public void testPostEventData() throws JSONException {
-        // GIVEN
-        String username = "assystem2@ASSYSTEM_TENANT4";
-        String password = "whySoSecret";
+    public void testPostEventData() {
+        TestData testData = testCase.getTestData(0);
 
+        // GIVEN
         Request request = new Request.Builder()
                 .url(buildUrl(PROTOCOL_HTTP, config.getAdapterHttpVertxStable(), PATH_HTTP_TELEMETRY))
                 .post()
                 .headers(getBaseRequestHeaders())
-                .body(new JSONObject()
-                        .put("event", "snow"))
-                .credentials(new Credentials(username, password))
+                .body(testData.getBody())
+                .credentials(new Credentials(testData.getUsername(), testData.getPassword()))
                 .build();
 
         // WHEN
         ResponseEntity<String> response = executeApiCall(request);
+        ResponseResult result = testCase.getResult(0);
 
         // THEN
-        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
-
-//		JSONObject body = getBodyAsJson(response);
-//		assertNotNull(body);
+        assertEquals(result.getStatusCode(), response.getStatusCodeValue());
     }
 
-
-
     @Test
-    public void testPublishControlData() throws Exception {
-        // publish
-        String publisherId = UUID.randomUUID().toString();
-        try {
-            IMqttClient client = new MqttClient(PROTOCOL_TCP + config.getAdapterMqttVertxStable(),publisherId);
-
-            MqttConnectOptions options = new MqttConnectOptions();
-            options.setAutomaticReconnect(true);
-            options.setCleanSession(true);
-            options.setUserName("assystem2@ASSYSTEM_TENANT4");
-            options.setPassword("whySoSecret".toCharArray());
-            options.setConnectionTimeout(10);
-            client.connect(options);
-
-            // receive
-            client.setCallback(new MqttCallback() {
-                @Override
-                public void connectionLost(Throwable throwable) {
-                    LOGGER.info("MQTT Error - Connection lost", throwable);
-                }
-
-                @Override
-                public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-                    LOGGER.info("MQTT Message arrived successfully: " + mqttMessage);
-                    assertNotNull(mqttMessage.getPayload());
-                }
-
-                @Override
-                public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-                    LOGGER.info("MQTT Message delivery completed " + iMqttDeliveryToken);
-                    assertEquals(true, iMqttDeliveryToken.isComplete());
-                }
-            });
-            CountDownLatch receivedSignal = new CountDownLatch(10);
-            client.subscribe(PATH_MQTT_TELEMETRY, (topic, msg) -> {
-                byte[] payload = msg.getPayload();
-                receivedSignal.countDown();
-            });
-
-            receivedSignal.await(5, TimeUnit.SECONDS);
-
-
-            client.publish(PATH_CONTROL, setMqttMessage("{ left: 5.0 }"));
-            client.publish(PATH_MQTT_TELEMETRY, setMqttMessage(String.format("T:%04.2f",10.0)));
-           // call();
-
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
-
+    public void testPublishControlData() {
+//        try {
+//            client.publish(PATH_CONTROL , setMqttMessage("{ left: 10.0 }"));
+//            client.publish(PATH_MQTT_TELEMETRY , setMqttMessage(String.format("temperature:%04.2f",11.0)));
+//
+//        } catch (MqttException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Ignore
@@ -360,7 +374,7 @@ public class HonoApiTest extends AbstractTestCase {
         ResponseEntity<String> responseEntity = executeApiCall(request);
 
         // THEN
-        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCodeValue());
     }
 
     @Ignore
@@ -378,7 +392,7 @@ public class HonoApiTest extends AbstractTestCase {
 		ResponseEntity<String> responseEntity = executeApiCall(request);
 
 		// THEN
-		assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
+		assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCodeValue());
 
 	}
 
@@ -466,9 +480,10 @@ public class HonoApiTest extends AbstractTestCase {
 
         // WHEN
         ResponseEntity<String> responseEntity = executeApiCall(request);
+        ResponseResult result = testCase.getResult(0);
 
         // THEN
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(result.getStatusCode(), responseEntity.getStatusCodeValue());
     }
 
 
@@ -511,7 +526,7 @@ public class HonoApiTest extends AbstractTestCase {
         ResponseEntity<String> responseEntity = executeApiCall(request);
 
         // THEN
-        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
+        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCodeValue());
     }
 
 }
