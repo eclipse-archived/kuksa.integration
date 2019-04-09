@@ -5,7 +5,8 @@ pipeline {
             steps {
                 git 'https://github.com/eclipse/kuksa.integration.git'
                 sh """cd testing && \
-                mvn test -Dhono_device_registry=${hono_device_registry}  \
+                export JAVA_HOME=/opt/tools/java/openjdk/latest && \
+                /opt/tools/apache-maven/latest/bin/mvn --batch-mode test -Dhono_device_registry=${hono_device_registry}  \
                 -Dhono_dispatch_router=${hono_dispatch_router}  \
                 -Dhono_adapter_http_vertx=${hono_adapter_http_vertx} \
                 -Dhono_adapter_mqtt_vertx=${hono_adapter_mqtt_vertx} \
