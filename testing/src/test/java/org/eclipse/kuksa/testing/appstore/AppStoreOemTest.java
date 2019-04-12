@@ -47,7 +47,7 @@ public class AppStoreOemTest extends AbstractAppStoreTest {
     private String createOem() throws JSONException {
         Request request = getBaseRequestBuilder()
                 .post()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/oem/"))
+                .url(buildUrl(address, "/api/1.0/oem/"))
                 .body(new JSONObject()
                         .put(JSON_PROPERTY_NAME, JSON_PROPERTY_NAME_VALUE)
                 )
@@ -71,7 +71,7 @@ public class AppStoreOemTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .post()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/oem/"))
+                .url(buildUrl(address, "/api/1.0/oem/"))
                 .body(new JSONObject()
                         .put(JSON_PROPERTY_NAME, oem)
                 )
@@ -106,7 +106,7 @@ public class AppStoreOemTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .get()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/oem/" + oemId))
+                .url(buildUrl(address, "/api/1.0/oem/" + oemId))
                 .build();
 
         // WHEN

@@ -73,7 +73,7 @@ public abstract class AppStoreTest extends AbstractTestCase {
     protected String createUser() throws JSONException {
         Request request = getBaseRequestBuilder()
                 .post()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/user/"))
+                .url(buildUrl(address, "/api/1.0/user/"))
                 .body(new JSONObject()
                         .put(JSON_PROPERTY_USER_ADMINUSER, JSON_PROPERTY_USER_ADMINUSER_VALUE)
                         .put(JSON_PROPERTY_USER_USERNAME, JSON_PROPERTY_USER_USERNAME_VALUE)
@@ -94,7 +94,7 @@ public abstract class AppStoreTest extends AbstractTestCase {
     protected void removeUser(Long userId) {
         Request request = getBaseRequestBuilder()
                 .delete()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/user/" + userId))
+                .url(buildUrl(address, "/api/1.0/user/" + userId))
                 .build();
 
         ResponseEntity<String> response = executeApiCall(request);
@@ -107,7 +107,7 @@ public abstract class AppStoreTest extends AbstractTestCase {
     protected String createCategory() throws JSONException {
         Request request = getBaseRequestBuilder()
                 .post()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/appcategory/"))
+                .url(buildUrl(address, "/api/1.0/appcategory/"))
                 .body(new JSONObject()
                         .put(JSON_PROPERTY_CATEGORY_NAME, JSON_PROPERTY_CATEGORY_NAME_VALUE)
                 )
@@ -125,7 +125,7 @@ public abstract class AppStoreTest extends AbstractTestCase {
     protected void removeCategory(Long categoryId) {
         Request request = getBaseRequestBuilder()
                 .delete()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/appcategory/" + categoryId))
+                .url(buildUrl(address, "/api/1.0/appcategory/" + categoryId))
                 .build();
 
         ResponseEntity<String> response = executeApiCall(request);
@@ -138,7 +138,7 @@ public abstract class AppStoreTest extends AbstractTestCase {
     protected String createApp() throws JSONException {
         Request request = getBaseRequestBuilder()
                 .post()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/app/"))
+                .url(buildUrl(address, "/api/1.0/app/"))
                 .body(new JSONObject()
                         .put(JSON_PROPERTY_APP_NAME, JSON_PROPERTY_APP_NAME_VALUE)
                         .put(JSON_PROPERTY_APP_VERSION, JSON_PROPERTY_APP_VERSION_VALUE)
@@ -161,7 +161,7 @@ public abstract class AppStoreTest extends AbstractTestCase {
     protected String removeApp(Long appId) {
         Request request = getBaseRequestBuilder()
                 .delete()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/app/" + appId))
+                .url(buildUrl(address, "/api/1.0/app/" + appId))
                 .build();
 
         ResponseEntity<String> response = executeApiCall(request);

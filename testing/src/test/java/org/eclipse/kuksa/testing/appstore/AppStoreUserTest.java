@@ -55,7 +55,7 @@ public class AppStoreUserTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .post()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/user/"))
+                .url(buildUrl(address, "/api/1.0/user/"))
                 .body(new JSONObject()
                         .put("adminuser", false)
                         .put(JSON_PROPERTY_USER_USERNAME, username)
@@ -87,7 +87,7 @@ public class AppStoreUserTest extends AbstractAppStoreTest {
         // GIVEN
         Request request = getBaseRequestBuilder()
                 .get()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/user/" + userId))
+                .url(buildUrl(address, "/api/1.0/user/" + userId))
                 .build();
 
         // WHEN
@@ -114,7 +114,7 @@ public class AppStoreUserTest extends AbstractAppStoreTest {
 
         Request request = getBaseRequestBuilder()
                 .put()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/user/" + userId))
+                .url(buildUrl(address, "/api/1.0/user/" + userId))
                 .body(new JSONObject()
                         .put(JSON_PROPERTY_USER_USERNAME, newUsername)
                         .put(JSON_PROPERTY_USER_PASSWORD, newPassword)
@@ -143,7 +143,7 @@ public class AppStoreUserTest extends AbstractAppStoreTest {
         // GIVEN
         Request request = getBaseRequestBuilder()
                 .delete()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/user/" + userId))
+                .url(buildUrl(address, "/api/1.0/user/" + userId))
                 .build();
 
         // WHEN
@@ -164,7 +164,7 @@ public class AppStoreUserTest extends AbstractAppStoreTest {
         // GIVEN
         Request request = getBaseRequestBuilder()
                 .get()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/user"))
+                .url(buildUrl(address, "/api/1.0/user"))
                 .build();
 
         // WHEN
@@ -182,7 +182,7 @@ public class AppStoreUserTest extends AbstractAppStoreTest {
         // GIVEN
         Request request = getBaseRequestBuilder()
                 .post()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/api/1.0/user/validation"))
+                .url(buildUrl(address, "/api/1.0/user/validation"))
                 .body(new JSONObject()
                         .put("adminuser", false)
                         .put(JSON_PROPERTY_USER_USERNAME, JSON_PROPERTY_USER_USERNAME_VALUE)
