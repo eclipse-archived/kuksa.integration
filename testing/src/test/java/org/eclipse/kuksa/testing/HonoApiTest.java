@@ -38,7 +38,6 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-
 @ContextConfiguration(classes = {GlobalConfiguration.class, HonoConfiguration.class})
 public class HonoApiTest extends AbstractTestCase {
 
@@ -48,9 +47,7 @@ public class HonoApiTest extends AbstractTestCase {
 
     private static final String PATH_CONTROL = "control/+/+/req/#"; // "/rover/1/RoverDriving/control";
 
-
     private static final String PATH_MQTT_TELEMETRY = "/rover/1/telemetry";
-
 
     private static final String PATH_HTTP_TELEMETRY = "/telemetry";
 
@@ -73,7 +70,7 @@ public class HonoApiTest extends AbstractTestCase {
         // publish
         String publisherId = UUID.randomUUID().toString();
         try {
-            client = new MqttClient(PROTOCOL_TCP + config.getAdapterMqttVertxStable(), publisherId);
+            client = new MqttClient(config.getAdapterMqttVertxStable(), publisherId);
 
             MqttConnectOptions options = new MqttConnectOptions();
             options.setAutomaticReconnect(true);
@@ -151,7 +148,7 @@ public class HonoApiTest extends AbstractTestCase {
         // GIVEN
 
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(), PATH_TENANT))
+                .url(buildUrl(config.getDeviceRegistryStable(), PATH_TENANT))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(new JSONObject()
@@ -167,7 +164,7 @@ public class HonoApiTest extends AbstractTestCase {
 
     public static void createDevice(String tenant, String device) throws JSONException {
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(), PATH_REGISTRATION + tenant))
+                .url(buildUrl(config.getDeviceRegistryStable(), PATH_REGISTRATION + tenant))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(new JSONObject()
@@ -183,7 +180,7 @@ public class HonoApiTest extends AbstractTestCase {
 
     public static void removeTenant(String tenant) {
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(),
+                .url(buildUrl(config.getDeviceRegistryStable(),
                         PATH_TENANT + tenant))
                 .delete()
                 .build();
@@ -196,7 +193,7 @@ public class HonoApiTest extends AbstractTestCase {
 
     public static void removeDevice(String tenant, String device) {
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(),
+                .url(buildUrl(config.getDeviceRegistryStable(),
                         PATH_REGISTRATION + tenant + "/" + device))
                 .delete()
                 .headers(getBaseRequestHeaders())
@@ -215,7 +212,7 @@ public class HonoApiTest extends AbstractTestCase {
         TestData testData = testCase.getTestData(0);;
 
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(), PATH_TENANT + testData.getTenantId()))
+                .url(buildUrl(config.getDeviceRegistryStable(), PATH_TENANT + testData.getTenantId()))
                 .get()
                 .headers(getBaseRequestHeaders())
                 .build();
@@ -243,7 +240,7 @@ public class HonoApiTest extends AbstractTestCase {
 
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(), PATH_REGISTRATION + testData.getTenantId() +"/" + testData.getDeviceId()))
+                .url(buildUrl(config.getDeviceRegistryStable(), PATH_REGISTRATION + testData.getTenantId() +"/" + testData.getDeviceId()))
                 .get()
                 .headers(getBaseRequestHeaders())
                 .build();
@@ -266,7 +263,7 @@ public class HonoApiTest extends AbstractTestCase {
         TestData testData = testCase.getTestData(0);
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(), PATH_TENANT))
+                .url(buildUrl(config.getDeviceRegistryStable(), PATH_TENANT))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(new JSONObject()
@@ -289,7 +286,7 @@ public class HonoApiTest extends AbstractTestCase {
 
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(), PATH_REGISTRATION + testData.getTenantId()))
+                .url(buildUrl(config.getDeviceRegistryStable(), PATH_REGISTRATION + testData.getTenantId()))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(new JSONObject()
@@ -312,7 +309,7 @@ public class HonoApiTest extends AbstractTestCase {
 
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getAdapterHttpVertxStable(), PATH_HTTP_TELEMETRY))
+                .url(buildUrl(config.getAdapterHttpVertxStable(), PATH_HTTP_TELEMETRY))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(testData.getBody())
@@ -333,7 +330,7 @@ public class HonoApiTest extends AbstractTestCase {
 
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getAdapterHttpVertxStable(), PATH_HTTP_TELEMETRY))
+                .url(buildUrl(config.getAdapterHttpVertxStable(), PATH_HTTP_TELEMETRY))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(testData.getBody())
@@ -364,7 +361,7 @@ public class HonoApiTest extends AbstractTestCase {
     public void testDeleteDeviceInfo() {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(),
+                .url(buildUrl(config.getDeviceRegistryStable(),
                         PATH_REGISTRATION + "ASSYSTEM_TENANT4" + "/" + "assystem2"))
                 .delete()
                 .headers(getBaseRequestHeaders())
@@ -383,7 +380,7 @@ public class HonoApiTest extends AbstractTestCase {
 		// GIVEN
 
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(),
+                .url(buildUrl(config.getDeviceRegistryStable(),
                         PATH_TENANT + "ASSYSTEM_TENANT4"))
                 .delete()
                 .build();
@@ -420,7 +417,7 @@ public class HonoApiTest extends AbstractTestCase {
     public void postDeviceCredentials() throws JSONException, NoSuchAlgorithmException {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(), PATH_CREDENTIALS + "ASSYSTEM_TENANT4"))
+                .url(buildUrl(config.getDeviceRegistryStable(), PATH_CREDENTIALS + "ASSYSTEM_TENANT4"))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(new JSONObject()
@@ -447,7 +444,7 @@ public class HonoApiTest extends AbstractTestCase {
     public static void createCredentials() throws JSONException, NoSuchAlgorithmException {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(), PATH_CREDENTIALS + "ASSYSTEM_TENANT4"))
+                .url(buildUrl(config.getDeviceRegistryStable(), PATH_CREDENTIALS + "ASSYSTEM_TENANT4"))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(new JSONObject()
@@ -472,7 +469,7 @@ public class HonoApiTest extends AbstractTestCase {
     public void getDeviceCredentials() {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(),
+                .url(buildUrl(config.getDeviceRegistryStable(),
                         PATH_CREDENTIALS + "ASSYSTEM_TENANT4" + "/" + "assystem2" + "/hashed-password"))
                 .get()
                 .headers(getBaseRequestHeaders())
@@ -490,14 +487,10 @@ public class HonoApiTest extends AbstractTestCase {
     public static void removeCredentials() {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(),
+                .url(buildUrl(config.getDeviceRegistryStable(),
                         PATH_CREDENTIALS + "ASSYSTEM_TENANT4" + "/" + "assystem2" + "/hashed-password"))
                 .delete()
                 .headers(getBaseRequestHeaders())
-             /*   .body(new JSONObject()
-                        .put("type", "hashed-password")
-                        .put("auth-id", "assystem2")
-                )*/
                 .build();
 
         // WHEN
@@ -512,7 +505,7 @@ public class HonoApiTest extends AbstractTestCase {
     public void deleteDeviceCredentials() throws JSONException {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, config.getDeviceRegistryStable(),
+                .url(buildUrl(config.getDeviceRegistryStable(),
                         PATH_CREDENTIALS + "ASSYSTEM_TENANT4" + "/" + "assystem2" + "/hashed-password"))
                 .delete()
                 .headers(getBaseRequestHeaders())

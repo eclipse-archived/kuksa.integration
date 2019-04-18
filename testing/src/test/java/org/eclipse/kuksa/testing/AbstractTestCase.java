@@ -122,12 +122,12 @@ public abstract class AbstractTestCase {
     protected abstract String getTestFile();
 
     // UTIL
-    protected static String buildUrl(String protocol, String baseUrl, String path) {
-        return new StringBuilder().append(protocol).append(baseUrl).append(path).toString();
+    protected static String buildUrl(String baseUrl, String path) {
+        return new StringBuilder().append(baseUrl).append(path).toString();
     }
 
-    protected static String staticBuildUrl(String protocol, String baseUrl, String path) {
-        return new StringBuilder().append(protocol).append(baseUrl).append(path).toString();
+    protected static String staticBuildUrl(String baseUrl, String path) {
+        return new StringBuilder().append(baseUrl).append(path).toString();
     }
 
     protected static HttpHeaders getBaseRequestHeaders() {
