@@ -80,7 +80,7 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
                 );
 
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/rest/v1/targets"))
+                .url(buildUrl(address, "/rest/v1/targets"))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(requestBody)
@@ -107,7 +107,7 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
     private void removeTargetForCleanup(String controllerId) {
         // build request
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/rest/v1/targets/" + controllerId))
+                .url(buildUrl(address, "/rest/v1/targets/" + controllerId))
                 .delete()
                 .headers(getBaseRequestHeaders())
                 .credentials(credentials)
@@ -124,7 +124,7 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
     @Test
     public void testCreateTarget() throws JSONException {
         // GIVEN
-        String url = buildUrl(PROTOCOL_HTTP, address, "/rest/v1/targets");
+        String url = buildUrl(address, "/rest/v1/targets");
 
         String controllerId = "test.create.target";
         String name = "test.target";
@@ -176,7 +176,7 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
     public void testGetAllTargets() throws JSONException {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/rest/v1/targets"))
+                .url(buildUrl(address, "/rest/v1/targets"))
                 .get()
                 .headers(getBaseRequestHeaders())
                 .credentials(credentials)
@@ -196,7 +196,7 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
     public void testDeleteTarget() {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/rest/v1/targets/" + controllerId))
+                .url(buildUrl(address, "/rest/v1/targets/" + controllerId))
                 .delete()
                 .headers(getBaseRequestHeaders())
                 .credentials(credentials)
@@ -216,7 +216,7 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
     public void testGetTarget() throws JSONException {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/rest/v1/targets/" + controllerId))
+                .url(buildUrl(address, "/rest/v1/targets/" + controllerId))
                 .get()
                 .headers(getBaseRequestHeaders())
                 .credentials(credentials)
@@ -241,7 +241,7 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
         String value = "test.edit.target";
 
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/rest/v1/targets/" + controllerId))
+                .url(buildUrl(address, "/rest/v1/targets/" + controllerId))
                 .put()
                 .credentials(credentials)
                 .headers(getBaseRequestHeaders())
@@ -269,7 +269,7 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
     public void testGetTargetActions() throws JSONException {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(PROTOCOL_HTTP, address, "/rest/v1/targets/" + controllerId + "/actions"))
+                .url(buildUrl(address, "/rest/v1/targets/" + controllerId + "/actions"))
                 .get()
                 .credentials(credentials)
                 .headers(getBaseRequestHeaders())
