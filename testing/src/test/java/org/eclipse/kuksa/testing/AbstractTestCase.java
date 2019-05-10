@@ -43,7 +43,6 @@ import static org.junit.Assert.fail;
  * the same directory.
  *
  * @author cnguyen
- * @author azorin
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @TestPropertySource({"classpath:application.properties", "classpath:local.properties"})
