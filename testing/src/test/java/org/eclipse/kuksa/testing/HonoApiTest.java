@@ -19,6 +19,7 @@ import org.eclipse.kuksa.testing.model.Credentials;
 import org.eclipse.kuksa.testing.model.ResponseResult;
 import org.eclipse.kuksa.testing.model.TestData;
 import org.eclipse.paho.client.mqttv3.*;
+import org.eclipse.paho.client.mqttv3.internal.security.SSLSocketFactoryFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,9 +29,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -62,7 +66,7 @@ public class HonoApiTest extends AbstractTestCase {
     private static IMqttClient client;
 
     @BeforeClass
-    public static void setup() throws JSONException, NoSuchAlgorithmException {
+    public static void setup() throws JSONException, NoSuchAlgorithmException, IOException {
         createTenant(tenant_id);
         createDevice(tenant_id, device_id);
         createCredentials();
@@ -75,11 +79,16 @@ public class HonoApiTest extends AbstractTestCase {
             MqttConnectOptions options = new MqttConnectOptions();
             options.setAutomaticReconnect(true);
             options.setCleanSession(true);
-//            options.setUserName("assystem2@ASSYSTEM_TENANT4");
-//            options.setPassword("whySoSecret".toCharArray());
-            options.setUserName("sensor1@TENANT5");
-            options.setPassword("hashdis".toCharArray());
+            options.setUserName("sensor1@DEFAULT_TENANT");
+            options.setPassword("hono-secret".toCharArray());
             options.setConnectionTimeout(10);
+            Properties sslProperties = new Properties();
+            ClassLoader classLoader = new HonoConfiguration().getClass().getClassLoader();
+            sslProperties.put(SSLSocketFactoryFactory.TRUSTSTORE, new File(classLoader.getResource("trustStore.jks").getFile()));
+            sslProperties.put(SSLSocketFactoryFactory.TRUSTSTOREPWD, "honotrust");
+            sslProperties.put(SSLSocketFactoryFactory.TRUSTSTORETYPE, "JKS");
+            sslProperties.put(SSLSocketFactoryFactory.CLIENTAUTH, false);
+            options.setSSLProperties(sslProperties);
             // actually connect the client
             client.connect(options);
 
@@ -347,13 +356,13 @@ public class HonoApiTest extends AbstractTestCase {
 
     @Test
     public void testPublishControlData() {
-//        try {
+        try {
 //            client.publish(PATH_CONTROL , setMqttMessage("{ left: 10.0 }"));
-//            client.publish(PATH_MQTT_TELEMETRY , setMqttMessage(String.format("temperature:%04.2f",11.0)));
-//
-//        } catch (MqttException e) {
-//            e.printStackTrace();
-//        }
+            client.publish(PATH_MQTT_TELEMETRY , setMqttMessage(String.format("temperature:%04.2f",11.0)));
+
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 
     @Ignore
