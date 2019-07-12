@@ -27,8 +27,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>
@@ -37,6 +37,19 @@
 			</exclusions>
 			<version>2.1.0.RELEASE</version>
 
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>5.1.5.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<scope>test</scope>
+			<version>5.1.5.RELEASE</version>
 		</dependency>
 
 		<dependency>
@@ -60,13 +73,6 @@
 
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<scope>test</scope>
-
-			<version>5.1.2.RELEASE</version>
-		</dependency>
 
 		<!-- PROTON LIBRARY -->
 		<dependency>
@@ -99,20 +105,20 @@
 		<dependency>
 			<groupId>org.eclipse.hono</groupId>
 			<artifactId>hono-client</artifactId>
-			<version>0.9</version>
+			<version>1.0-M3</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.hono</groupId>
 			<artifactId>hono-demo-certs</artifactId>
-			<version>0.9</version>
+			<version>1.0-M3</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.hono</groupId>
 			<artifactId>hono-legal</artifactId>
-			<version>0.9</version>
+			<version>1.0-M3</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -136,6 +142,19 @@
 			<version>2.11.1</version>
 		</dependency>
 
+
+		<!-- STATIC LOGGER BINDER -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+
 		<!-- READ YAML FILE -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -147,6 +166,13 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.9.7</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>5.1.5.RELEASE</version>
+			<scope>compile</scope>
+		</dependency>
+
 
 	</dependencies>
 

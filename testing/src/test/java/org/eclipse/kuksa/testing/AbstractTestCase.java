@@ -14,6 +14,8 @@ package org.eclipse.kuksa.testing;
 
 import org.eclipse.kuksa.testing.client.Request;
 import org.eclipse.kuksa.testing.client.TestApiRunner;
+import org.eclipse.kuksa.testing.config.GlobalConfiguration;
+import org.eclipse.kuksa.testing.config.HawkbitMultiPartFileFeignClient;
 import org.eclipse.kuksa.testing.model.TestCase;
 import org.eclipse.kuksa.testing.model.TestSuite;
 import org.eclipse.kuksa.testing.model.YamlConverter;
@@ -26,9 +28,19 @@ import org.junit.*;
 import org.junit.rules.TestName;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.cloud.openfeign.FeignAutoConfiguration;
+import org.springframework.cloud.openfeign.ribbon.FeignRibbonClientAutoConfiguration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -44,7 +56,11 @@ import static org.junit.Assert.fail;
  *
  * @author cnguyen
  */
+
+
+@EnableFeignClients
 @RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest
 @TestPropertySource({"classpath:application.properties", "classpath:local.properties"})
 public abstract class AbstractTestCase {
 
@@ -174,7 +190,7 @@ public abstract class AbstractTestCase {
         byte[] payload = value.getBytes();
         MqttMessage msg = new MqttMessage(payload);
         msg.setQos(0);
-        msg.setRetained(false);
+        msg.setRetained(true);
         return msg;
     }
 
@@ -189,10 +205,6 @@ public abstract class AbstractTestCase {
     }
 
     protected static ResponseEntity<String> executeApiCall(Request request) {
-        return runner.executeApiCall(request);
-    }
-
-    protected static ResponseEntity<String> staticExecuteApiCall(Request request) {
         return runner.executeApiCall(request);
     }
 

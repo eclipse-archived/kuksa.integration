@@ -16,18 +16,18 @@ test-suite:
         test-case: postTenantInfo
         expected-result: 409 CONFLICT
         test-data:
-            - '[{"tenant-id": "ASSYSTEM_TENANT4"}]'
+            - '[{"tenant-id": "EXPLEO_TENANT4"}]'
       4:
         test-case: postDeviceInfo
         expected-result: 201 CREATED
         test-data:
-            - ASSYSTEM_TENANT4
-            - '[{"device-id": assystem2}]'
+            - EXPLEO_TENANT4
+            - '[{"device-id": expleo2}]'
       5:
         test-case: postTelemetryData
         expected-result: 202 ACCEPTED
         test-data:
-            - ASSYSTEM_TEST_TENANT
+            - EXPLEO_TEST_TENANT
             - 1
             - '[{"temperature": 5}]'
   - hawkbit-testsuite:

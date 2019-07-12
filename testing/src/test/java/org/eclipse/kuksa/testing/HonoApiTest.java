@@ -42,6 +42,7 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@Ignore
 @ContextConfiguration(classes = {GlobalConfiguration.class, HonoConfiguration.class})
 public class HonoApiTest extends AbstractTestCase {
 
@@ -51,7 +52,7 @@ public class HonoApiTest extends AbstractTestCase {
 
     private static final String PATH_CONTROL = "control/+/+/req/#"; // "/rover/1/RoverDriving/control";
 
-    private static final String PATH_MQTT_TELEMETRY = "/rover/1/telemetry";
+    private static final String PATH_MQTT_TELEMETRY = "telemetry";
 
     private static final String PATH_HTTP_TELEMETRY = "/telemetry";
 
@@ -60,8 +61,8 @@ public class HonoApiTest extends AbstractTestCase {
     @Autowired
     private static HonoConfiguration config;
 
-    private static String tenant_id = "ASSYSTEM_TENANT4";
-    private static String device_id = "assystem2";
+    private static String tenant_id = "EXPLEO_TENANT4";
+    private static String device_id = "expleo2";
 
     private static IMqttClient client;
 
@@ -82,6 +83,7 @@ public class HonoApiTest extends AbstractTestCase {
             options.setUserName("sensor1@DEFAULT_TENANT");
             options.setPassword("hono-secret".toCharArray());
             options.setConnectionTimeout(10);
+
             Properties sslProperties = new Properties();
             ClassLoader classLoader = new HonoConfiguration().getClass().getClassLoader();
             sslProperties.put(SSLSocketFactoryFactory.TRUSTSTORE, new File(classLoader.getResource("trustStore.jks").getFile()));
@@ -117,11 +119,12 @@ public class HonoApiTest extends AbstractTestCase {
             });
 
             CountDownLatch receivedSignal = new CountDownLatch(10);
-//
+
 //            client.subscribe(PATH_MQTT_TELEMETRY, (topic, msg) -> {
 //                receivedSignal.countDown();
 //                System.out.println("Something arrived: at " + PATH_MQTT_TELEMETRY + msg.toString());
 //            });
+
 
             client.subscribe(PATH_CONTROL, (topic, msg) -> {
                 receivedSignal.countDown();
@@ -371,7 +374,7 @@ public class HonoApiTest extends AbstractTestCase {
         // GIVEN
         Request request = new Request.Builder()
                 .url(buildUrl(config.getDeviceRegistryStable(),
-                        PATH_REGISTRATION + "ASSYSTEM_TENANT4" + "/" + "assystem2"))
+                        PATH_REGISTRATION + "EXPLEO_TENANT4" + "/" + "expleo2"))
                 .delete()
                 .headers(getBaseRequestHeaders())
                 .build();
@@ -390,7 +393,7 @@ public class HonoApiTest extends AbstractTestCase {
 
         Request request = new Request.Builder()
                 .url(buildUrl(config.getDeviceRegistryStable(),
-                        PATH_TENANT + "ASSYSTEM_TENANT4"))
+                        PATH_TENANT + "EXPLEO_TENANT4"))
                 .delete()
                 .build();
 		// WHEN
@@ -403,8 +406,8 @@ public class HonoApiTest extends AbstractTestCase {
 	}
 
     public static String createDeviceCredentials() throws NoSuchAlgorithmException {
-        String deviceId = "assystem2";
-        String tenantId = "ASSYSTEM_TENANT4";
+        String deviceId = "expleo2";
+        String tenantId = "EXPLEO_TENANT4";
         String password = "whySoSecret";
 
         String username = deviceId + "@" + tenantId;
@@ -426,13 +429,13 @@ public class HonoApiTest extends AbstractTestCase {
     public void postDeviceCredentials() throws JSONException, NoSuchAlgorithmException {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(config.getDeviceRegistryStable(), PATH_CREDENTIALS + "ASSYSTEM_TENANT4"))
+                .url(buildUrl(config.getDeviceRegistryStable(), PATH_CREDENTIALS + "EXPLEO_TENANT4"))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(new JSONObject()
-                        .put("device-id", "assystem2")
+                        .put("device-id", "expleo2")
                         .put("type", "hashed-password")
-                        .put("auth-id", "assystem2")
+                        .put("auth-id", "expleo2")
                         .put("secrets", new JSONArray()
                                 .put(new JSONObject()
                                         .put("pwd-hash", createDeviceCredentials())
@@ -453,13 +456,13 @@ public class HonoApiTest extends AbstractTestCase {
     public static void createCredentials() throws JSONException, NoSuchAlgorithmException {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(config.getDeviceRegistryStable(), PATH_CREDENTIALS + "ASSYSTEM_TENANT4"))
+                .url(buildUrl(config.getDeviceRegistryStable(), PATH_CREDENTIALS + "EXPLEO_TENANT4"))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(new JSONObject()
-                        .put("device-id", "assystem2")
+                        .put("device-id", "expleo2")
                         .put("type", "hashed-password")
-                        .put("auth-id", "assystem2")
+                        .put("auth-id", "expleo2")
                         .put("secrets", new JSONArray()
                                 .put(new JSONObject()
                                         .put("pwd-hash", createDeviceCredentials())
@@ -479,7 +482,7 @@ public class HonoApiTest extends AbstractTestCase {
         // GIVEN
         Request request = new Request.Builder()
                 .url(buildUrl(config.getDeviceRegistryStable(),
-                        PATH_CREDENTIALS + "ASSYSTEM_TENANT4" + "/" + "assystem2" + "/hashed-password"))
+                        PATH_CREDENTIALS + "EXPLEO_TENANT4" + "/" + "expleo2" + "/hashed-password"))
                 .get()
                 .headers(getBaseRequestHeaders())
                 .build();
@@ -497,7 +500,7 @@ public class HonoApiTest extends AbstractTestCase {
         // GIVEN
         Request request = new Request.Builder()
                 .url(buildUrl(config.getDeviceRegistryStable(),
-                        PATH_CREDENTIALS + "ASSYSTEM_TENANT4" + "/" + "assystem2" + "/hashed-password"))
+                        PATH_CREDENTIALS + "EXPLEO_TENANT4" + "/" + "expleo2" + "/hashed-password"))
                 .delete()
                 .headers(getBaseRequestHeaders())
                 .build();
@@ -515,12 +518,12 @@ public class HonoApiTest extends AbstractTestCase {
         // GIVEN
         Request request = new Request.Builder()
                 .url(buildUrl(config.getDeviceRegistryStable(),
-                        PATH_CREDENTIALS + "ASSYSTEM_TENANT4" + "/" + "assystem2" + "/hashed-password"))
+                        PATH_CREDENTIALS + "EXPLEO_TENANT4" + "/" + "expleo2" + "/hashed-password"))
                 .delete()
                 .headers(getBaseRequestHeaders())
                 .body(new JSONObject()
                         .put("type", "hashed-password")
-                        .put("auth-id", "assystem2")
+                        .put("auth-id", "expleo2")
                 )
                 .build();
 

@@ -6,12 +6,14 @@ import org.eclipse.kuksa.testing.config.AppStoreConfiguration;
 import org.eclipse.kuksa.testing.model.Credentials;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Date;
 
+@Ignore
 @ContextConfiguration(classes = {AppStoreConfiguration.class})
 public abstract class AppStoreTest extends AbstractTestCase {
 

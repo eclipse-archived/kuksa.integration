@@ -15,8 +15,11 @@ package org.eclipse.kuksa.testing.client;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.RequestEntity;
 
 import org.eclipse.kuksa.testing.model.Credentials;
+
+import javax.swing.*;
 
 public class Request {
 
@@ -54,15 +57,15 @@ public class Request {
 
 	public static class Builder {
 
-		private String url;
+		public String url;
 
-		private HttpMethod method;
+		public HttpMethod method;
 
-		private HttpHeaders headers;
+		public HttpHeaders headers;
 
-		private String body;
+		public String body;
 
-		private Credentials credentials;
+		public Credentials credentials;
 
 		public Builder url(String url) {
 			this.url = url;

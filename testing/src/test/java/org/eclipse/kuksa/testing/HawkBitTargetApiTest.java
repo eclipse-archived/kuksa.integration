@@ -35,6 +35,7 @@ import static org.junit.Assert.*;
  *
  * @author cnguyen
  */
+@Ignore
 @ContextConfiguration(classes = {GlobalConfiguration.class, HawkBitConfiguration.class})
 public class HawkBitTargetApiTest extends AbstractTestCase {
 
@@ -263,6 +264,8 @@ public class HawkBitTargetApiTest extends AbstractTestCase {
 
         assertEquals(value, body.get("name"));
         assertEquals(value, body.get("description"));
+
+        System.out.println("The new description is: "+body.get("description"));
     }
 
     @Test
