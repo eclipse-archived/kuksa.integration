@@ -283,7 +283,7 @@ public class SmallIntegrationTest extends AbstractTestCase {
 
     public void uploadArtifactToHawkbit() throws Exception {
         ClassLoader classLoader = new HonoConfiguration().getClass().getClassLoader();
-        File file = new File(classLoader.getResource("DOCKER_file.jar").getFile());
+        File file = new File(classLoader.getResource("DOCKER_dashboard_arm").getFile());
 
         MultipartFile imageFile = new MultipartFile() {
 
