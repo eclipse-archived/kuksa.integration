@@ -15,11 +15,8 @@ package org.eclipse.kuksa.testing.client;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.RequestEntity;
 
 import org.eclipse.kuksa.testing.model.Credentials;
-
-import javax.swing.*;
 
 public class Request {
 

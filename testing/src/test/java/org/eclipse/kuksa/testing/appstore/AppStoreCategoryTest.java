@@ -22,7 +22,7 @@ import org.springframework.http.ResponseEntity;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@Ignore
+
 public class AppStoreCategoryTest extends AbstractAppStoreTest {
 
     private static final String JSON_PROPERTY_ID = "id";

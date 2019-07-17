@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  *
  * @author cnguyen
  */
-@Ignore
+
 @ContextConfiguration(classes = {GlobalConfiguration.class, HawkBitConfiguration.class})
 public class HawkBitTargetApiTest extends AbstractTestCase {
 

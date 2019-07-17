@@ -22,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 
 import static org.junit.Assert.*;
 
-@Ignore
 public class AppStoreOemTest extends AbstractAppStoreTest {
 
     private static final String JSON_PROPERTY_ID = "id";

@@ -31,7 +31,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Random;
 
 import static org.junit.Assert.assertNotNull;
@@ -267,9 +266,6 @@ public class SmallIntegrationTest extends AbstractTestCase {
         // WHEN
         ResponseEntity<String> responseEntity = executeApiCall(request);
 
-        Iterator<String> keys = new JSONObject(responseEntity.getBody()).keys();
-
-
         JSONArray array = new JSONObject(responseEntity.getBody()).getJSONArray("content");
         for (int i = 0; i < array.length(); i++) {
             JSONObject row = array.getJSONObject(i);
@@ -281,9 +277,9 @@ public class SmallIntegrationTest extends AbstractTestCase {
         uploadArtifactToHawkbit();
     }
 
-    public void uploadArtifactToHawkbit() throws Exception {
+    public void uploadArtifactToHawkbit() {
         ClassLoader classLoader = new HonoConfiguration().getClass().getClassLoader();
-        File file = new File(classLoader.getResource("DOCKER_dashboard_arm").getFile());
+        File file = new File(classLoader.getResource("DOCKER_dashboard_arm.tar").getFile());
 
         MultipartFile imageFile = new MultipartFile() {
 
@@ -313,17 +309,17 @@ public class SmallIntegrationTest extends AbstractTestCase {
             }
 
             @Override
-            public byte[] getBytes() throws IOException {
+            public byte[] getBytes() {
                 return readContentIntoByteArray(file);
             }
 
             @Override
-            public InputStream getInputStream() throws IOException {
+            public InputStream getInputStream() {
                 return new ByteArrayInputStream(readContentIntoByteArray(file));
             }
 
             @Override
-            public void transferTo(File dest) throws IOException, IllegalStateException {
+            public void transferTo(File dest) throws IllegalStateException {
 
             }
         };
@@ -388,7 +384,7 @@ public class SmallIntegrationTest extends AbstractTestCase {
         System.out.println(responseEntity.getBody());
     }
 
-    public void testPurchaseApp() throws Exception {
+    public void testPurchaseApp() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBasicAuth("admin", "admin");
@@ -430,14 +426,14 @@ public class SmallIntegrationTest extends AbstractTestCase {
 
 
 
-    protected static Request.Builder getBaseRequestBuilder() {
+    private static Request.Builder getBaseRequestBuilder() {
         return new Request.Builder()
                 .headers(getBaseRequestHeaders())
                 .credentials(hawkbitCredentials);
     }
 
 
-    protected static String createUser() throws JSONException {
+    private static String createUser() throws JSONException {
         Request request = getBaseRequestBuilder()
                 .post()
                 .url(buildUrl(appstoreAddress, "/api/1.0/user/"))
@@ -459,7 +455,7 @@ public class SmallIntegrationTest extends AbstractTestCase {
         return response.getBody();
     }
 
-    protected static String createCategory() throws JSONException {
+    private static String createCategory() throws JSONException {
         Request request = getBaseRequestBuilder()
                 .post()
                 .url(buildUrl(appstoreAddress, "/api/1.0/appcategory/"))
@@ -478,7 +474,7 @@ public class SmallIntegrationTest extends AbstractTestCase {
         return response.getBody();
     }
 
-    protected static String createApp(Long categoryId) throws JSONException {
+    private static String createApp(Long categoryId) throws JSONException {
         try {
             JSON_PROPERTY_APP_CATEGORY_NAME_VALUE = new JSONObject().put("id", categoryId ).put("name", category.getString("name"));
         } catch (JSONException e) {
@@ -529,7 +525,7 @@ public class SmallIntegrationTest extends AbstractTestCase {
 
     }
 
-    protected static void removeCategory(Long categoryId) {
+    private static void removeCategory(Long categoryId) {
         Request request = getBaseRequestBuilder()
                 .delete()
                 .url(buildUrl(appstoreAddress, "/api/1.0/appcategory/" + categoryId))
@@ -542,7 +538,7 @@ public class SmallIntegrationTest extends AbstractTestCase {
         }
     }
 
-    protected static String removeApp(Long appId) {
+    private static void removeApp(Long appId) {
         Request request = getBaseRequestBuilder()
                 .delete()
                 .url(buildUrl(appstoreAddress, "/api/1.0/app/" + appId))
@@ -553,11 +549,9 @@ public class SmallIntegrationTest extends AbstractTestCase {
         if (!response.getStatusCode().is2xxSuccessful()) {
             LOGGER.error(new Exception("Failed to remove app store app."));
         }
-
-        return response.getBody();
     }
 
-    protected static void removeUser(Long userId) {
+    private static void removeUser(Long userId) {
         Request request = getBaseRequestBuilder()
                 .delete()
                 .url(buildUrl(appstoreAddress, "/api/1.0/user/" + userId))

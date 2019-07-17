@@ -25,7 +25,6 @@ import java.util.Date;
 import static org.junit.Assert.*;
 
 
-@Ignore
 public class AppStoreAppTest extends AbstractAppStoreTest {
 
     private static final String JSON_PROPERTY_ID = "id";
@@ -350,7 +349,7 @@ public class AppStoreAppTest extends AbstractAppStoreTest {
     }
 
     @Test
-    public void testPurchaseApp() throws Exception {
+    public void testPurchaseApp() {
         // GIVEN
         ResponseResult result = testCase.getResult(0);
 
@@ -365,13 +364,6 @@ public class AppStoreAppTest extends AbstractAppStoreTest {
         // THEN
         assertNotNull(response);
         assertEquals(result.getStatusCode(), response.getStatusCodeValue());
-//
-//        JSONObject body = new JSONObject(response.getBody());
-//        assertNotNull(body);
-//
-//        JSONArray owners = body.getJSONArray("ownerusers");
-//        assertNotNull(owners);
-//        assertEquals(1, owners.length());
     }
 
 }

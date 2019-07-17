@@ -1,0 +1,46 @@
+hono_device_registry: localhost:8080
+hono_dispatch_router: localhost:5671
+hono_adapter_http_vertx: localhost:8080
+hono_adapter_mqtt_vertx: localhost:1883
+
+hawkbit:
+  username: admin
+  password: admin
+  address: localhost:8080
+  tenant: default
+
+appstore:
+  address: localhost:8082
+  username: admin
+  password: admin
+
+com:
+  fasterxml:
+    jackson:
+      databind:
+        SerializationFeature:
+          fail_on_empty_beans: false
+
+address:
+  resolver:
+    cacheNegativeTimeToLive: 0 #discard failed DNS lookup results immediately
+    cacheMaxTimeToLive: 0 #support DNS based service resolution
+    rotateServers: true
+    queryTimeout: 2000
+
+tenant:
+  id: DEFAULT_TENANT
+device:
+  id: 4711
+
+spring:
+  jmx:
+    enabled: false
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: none

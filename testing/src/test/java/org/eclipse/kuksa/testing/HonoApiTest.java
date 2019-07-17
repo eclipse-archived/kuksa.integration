@@ -30,7 +30,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.io.File;
-import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -39,10 +38,9 @@ import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
-@Ignore
+
 @ContextConfiguration(classes = {GlobalConfiguration.class, HonoConfiguration.class})
 public class HonoApiTest extends AbstractTestCase {
 
@@ -50,13 +48,15 @@ public class HonoApiTest extends AbstractTestCase {
 
     private static final String PATH_REGISTRATION = "/registration/";
 
-    private static final String PATH_CONTROL = "control/+/+/req/#"; // "/rover/1/RoverDriving/control";
+    private static final String PATH_CONTROL = "control/+/+/req/#";
 
-    private static final String PATH_MQTT_TELEMETRY = "telemetry";
+    private static final String PATH_MQTT_TELEMETRY = "/telemetry";
 
     private static final String PATH_HTTP_TELEMETRY = "/telemetry";
 
     private static final String PATH_CREDENTIALS = "/credentials/";
+
+    private static MqttMessage message;
 
     @Autowired
     private static HonoConfiguration config;
@@ -67,7 +67,7 @@ public class HonoApiTest extends AbstractTestCase {
     private static IMqttClient client;
 
     @BeforeClass
-    public static void setup() throws JSONException, NoSuchAlgorithmException, IOException {
+    public static void setup() throws JSONException, NoSuchAlgorithmException {
         createTenant(tenant_id);
         createDevice(tenant_id, device_id);
         createCredentials();
@@ -75,20 +75,19 @@ public class HonoApiTest extends AbstractTestCase {
         // publish
         String publisherId = UUID.randomUUID().toString();
         try {
-            client = new MqttClient(config.getAdapterMqttVertxStable(), publisherId);
+            client = new MqttClient(HonoConfiguration.getAdapterMqttVertxStable(), publisherId);
 
             MqttConnectOptions options = new MqttConnectOptions();
             options.setAutomaticReconnect(true);
             options.setCleanSession(true);
             options.setUserName("sensor1@DEFAULT_TENANT");
             options.setPassword("hono-secret".toCharArray());
-            options.setConnectionTimeout(10);
+            options.setConnectionTimeout(1);
 
             Properties sslProperties = new Properties();
             ClassLoader classLoader = new HonoConfiguration().getClass().getClassLoader();
-            sslProperties.put(SSLSocketFactoryFactory.TRUSTSTORE, new File(classLoader.getResource("trustStore.jks").getFile()));
-            sslProperties.put(SSLSocketFactoryFactory.TRUSTSTOREPWD, "honotrust");
-            sslProperties.put(SSLSocketFactoryFactory.TRUSTSTORETYPE, "JKS");
+            sslProperties.put(SSLSocketFactoryFactory.KEYSTORE,  new File(classLoader.getResource("DSTRootX3.pem").getFile()));
+            sslProperties.put(SSLSocketFactoryFactory.KEYSTORETYPE, "PEM");
             sslProperties.put(SSLSocketFactoryFactory.CLIENTAUTH, false);
             options.setSSLProperties(sslProperties);
             // actually connect the client
@@ -104,6 +103,7 @@ public class HonoApiTest extends AbstractTestCase {
                 @Override
                 public void messageArrived(String s, MqttMessage mqttMessage) {
                     System.out.println("MQTT Message arrived successfully: " + mqttMessage);
+                    message = mqttMessage;
                     assertNotNull(mqttMessage.getPayload());
                 }
 
@@ -114,17 +114,11 @@ public class HonoApiTest extends AbstractTestCase {
                     } catch (MqttException e) {
                         e.printStackTrace();
                     }
-                    assertEquals(true, iMqttDeliveryToken.isComplete());
+                    assertTrue(iMqttDeliveryToken.isComplete());
                 }
             });
 
-            CountDownLatch receivedSignal = new CountDownLatch(10);
-
-//            client.subscribe(PATH_MQTT_TELEMETRY, (topic, msg) -> {
-//                receivedSignal.countDown();
-//                System.out.println("Something arrived: at " + PATH_MQTT_TELEMETRY + msg.toString());
-//            });
-
+            CountDownLatch receivedSignal = new CountDownLatch(1);
 
             client.subscribe(PATH_CONTROL, (topic, msg) -> {
                 receivedSignal.countDown();
@@ -132,7 +126,7 @@ public class HonoApiTest extends AbstractTestCase {
 
             });
 
-            receivedSignal.await(10, TimeUnit.SECONDS);
+            receivedSignal.await(15, TimeUnit.SECONDS);
 
         } catch (MqttException e) {
             e.printStackTrace();
@@ -141,7 +135,6 @@ public class HonoApiTest extends AbstractTestCase {
             e.printStackTrace();
             System.out.println("MQTT Interrupt");
         }
-
     }
 
     @AfterClass
@@ -160,7 +153,7 @@ public class HonoApiTest extends AbstractTestCase {
         // GIVEN
 
         Request request = new Request.Builder()
-                .url(buildUrl(config.getDeviceRegistryStable(), PATH_TENANT))
+                .url(buildUrl(HonoConfiguration.getDeviceRegistryStable(), PATH_TENANT))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(new JSONObject()
@@ -176,7 +169,7 @@ public class HonoApiTest extends AbstractTestCase {
 
     public static void createDevice(String tenant, String device) throws JSONException {
         Request request = new Request.Builder()
-                .url(buildUrl(config.getDeviceRegistryStable(), PATH_REGISTRATION + tenant))
+                .url(buildUrl(HonoConfiguration.getDeviceRegistryStable(), PATH_REGISTRATION + tenant))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(new JSONObject()
@@ -192,7 +185,7 @@ public class HonoApiTest extends AbstractTestCase {
 
     public static void removeTenant(String tenant) {
         Request request = new Request.Builder()
-                .url(buildUrl(config.getDeviceRegistryStable(),
+                .url(buildUrl(HonoConfiguration.getDeviceRegistryStable(),
                         PATH_TENANT + tenant))
                 .delete()
                 .build();
@@ -205,7 +198,7 @@ public class HonoApiTest extends AbstractTestCase {
 
     public static void removeDevice(String tenant, String device) {
         Request request = new Request.Builder()
-                .url(buildUrl(config.getDeviceRegistryStable(),
+                .url(buildUrl(HonoConfiguration.getDeviceRegistryStable(),
                         PATH_REGISTRATION + tenant + "/" + device))
                 .delete()
                 .headers(getBaseRequestHeaders())
@@ -221,10 +214,10 @@ public class HonoApiTest extends AbstractTestCase {
     @Test
     public void testGetTenantInfo() {
         // GIVEN
-        TestData testData = testCase.getTestData(0);;
+        TestData testData = testCase.getTestData(0);
 
         Request request = new Request.Builder()
-                .url(buildUrl(config.getDeviceRegistryStable(), PATH_TENANT + testData.getTenantId()))
+                .url(buildUrl(HonoConfiguration.getDeviceRegistryStable(), PATH_TENANT + testData.getTenantId()))
                 .get()
                 .headers(getBaseRequestHeaders())
                 .build();
@@ -248,11 +241,11 @@ public class HonoApiTest extends AbstractTestCase {
     @Test
     public void testGetDeviceInfo() {
 
-        TestData testData = testCase.getTestData(0);;
+        TestData testData = testCase.getTestData(0);
 
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(config.getDeviceRegistryStable(), PATH_REGISTRATION + testData.getTenantId() +"/" + testData.getDeviceId()))
+                .url(buildUrl(HonoConfiguration.getDeviceRegistryStable(), PATH_REGISTRATION + testData.getTenantId() +"/" + testData.getDeviceId()))
                 .get()
                 .headers(getBaseRequestHeaders())
                 .build();
@@ -275,7 +268,7 @@ public class HonoApiTest extends AbstractTestCase {
         TestData testData = testCase.getTestData(0);
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(config.getDeviceRegistryStable(), PATH_TENANT))
+                .url(buildUrl(HonoConfiguration.getDeviceRegistryStable(), PATH_TENANT))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(new JSONObject()
@@ -298,7 +291,7 @@ public class HonoApiTest extends AbstractTestCase {
 
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(config.getDeviceRegistryStable(), PATH_REGISTRATION + testData.getTenantId()))
+                .url(buildUrl(HonoConfiguration.getDeviceRegistryStable(), PATH_REGISTRATION + testData.getTenantId()))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(new JSONObject()
@@ -316,12 +309,12 @@ public class HonoApiTest extends AbstractTestCase {
     }
 
     @Test
-    public void testPostTelemetryData() throws JSONException {
+    public void testPublishTelemetryData() {
         TestData testData = testCase.getTestData(0);
 
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(config.getAdapterHttpVertxStable(), PATH_HTTP_TELEMETRY))
+                .url(buildUrl(HonoConfiguration.getAdapterHttpVertxStable(), PATH_HTTP_TELEMETRY))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(testData.getBody())
@@ -337,12 +330,12 @@ public class HonoApiTest extends AbstractTestCase {
     }
 
     @Test
-    public void testPostEventData() {
+    public void testPublishEventData() {
         TestData testData = testCase.getTestData(0);
 
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(config.getAdapterHttpVertxStable(), PATH_HTTP_TELEMETRY))
+                .url(buildUrl(HonoConfiguration.getAdapterHttpVertxStable(), PATH_HTTP_TELEMETRY))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(testData.getBody())
@@ -359,13 +352,7 @@ public class HonoApiTest extends AbstractTestCase {
 
     @Test
     public void testPublishControlData() {
-        try {
-//            client.publish(PATH_CONTROL , setMqttMessage("{ left: 10.0 }"));
-            client.publish(PATH_MQTT_TELEMETRY , setMqttMessage(String.format("temperature:%04.2f",11.0)));
-
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
+        assertNotNull(message.getPayload());
     }
 
     @Ignore
@@ -373,7 +360,7 @@ public class HonoApiTest extends AbstractTestCase {
     public void testDeleteDeviceInfo() {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(config.getDeviceRegistryStable(),
+                .url(buildUrl(HonoConfiguration.getDeviceRegistryStable(),
                         PATH_REGISTRATION + "EXPLEO_TENANT4" + "/" + "expleo2"))
                 .delete()
                 .headers(getBaseRequestHeaders())
@@ -383,7 +370,7 @@ public class HonoApiTest extends AbstractTestCase {
         ResponseEntity<String> responseEntity = executeApiCall(request);
 
         // THEN
-        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCodeValue());
+        assertEquals(HttpStatus.NO_CONTENT.value(), responseEntity.getStatusCodeValue());
     }
 
     @Ignore
@@ -392,7 +379,7 @@ public class HonoApiTest extends AbstractTestCase {
 		// GIVEN
 
         Request request = new Request.Builder()
-                .url(buildUrl(config.getDeviceRegistryStable(),
+                .url(buildUrl(HonoConfiguration.getDeviceRegistryStable(),
                         PATH_TENANT + "EXPLEO_TENANT4"))
                 .delete()
                 .build();
@@ -401,7 +388,7 @@ public class HonoApiTest extends AbstractTestCase {
 		ResponseEntity<String> responseEntity = executeApiCall(request);
 
 		// THEN
-		assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCodeValue());
+		assertEquals(HttpStatus.NO_CONTENT.value(), responseEntity.getStatusCodeValue());
 
 	}
 
@@ -420,8 +407,7 @@ public class HonoApiTest extends AbstractTestCase {
         md.update(str.getBytes());
         byte byteData[] = md.digest();
 
-        String hashCodeBuffer = (Base64.getEncoder().encodeToString(byteData));
-        return hashCodeBuffer;
+        return Base64.getEncoder().encodeToString(byteData);
     }
 
     @Ignore
@@ -429,7 +415,7 @@ public class HonoApiTest extends AbstractTestCase {
     public void postDeviceCredentials() throws JSONException, NoSuchAlgorithmException {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(config.getDeviceRegistryStable(), PATH_CREDENTIALS + "EXPLEO_TENANT4"))
+                .url(buildUrl(HonoConfiguration.getDeviceRegistryStable(), PATH_CREDENTIALS + "EXPLEO_TENANT4"))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(new JSONObject()
@@ -456,7 +442,7 @@ public class HonoApiTest extends AbstractTestCase {
     public static void createCredentials() throws JSONException, NoSuchAlgorithmException {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(config.getDeviceRegistryStable(), PATH_CREDENTIALS + "EXPLEO_TENANT4"))
+                .url(buildUrl(HonoConfiguration.getDeviceRegistryStable(), PATH_CREDENTIALS + "EXPLEO_TENANT4"))
                 .post()
                 .headers(getBaseRequestHeaders())
                 .body(new JSONObject()
@@ -474,14 +460,14 @@ public class HonoApiTest extends AbstractTestCase {
                 .build();
 
         // WHEN
-        ResponseEntity<String> responseEntity = executeApiCall(request);
+        executeApiCall(request);
     }
 
     @Test
     public void getDeviceCredentials() {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(config.getDeviceRegistryStable(),
+                .url(buildUrl(HonoConfiguration.getDeviceRegistryStable(),
                         PATH_CREDENTIALS + "EXPLEO_TENANT4" + "/" + "expleo2" + "/hashed-password"))
                 .get()
                 .headers(getBaseRequestHeaders())
@@ -499,7 +485,7 @@ public class HonoApiTest extends AbstractTestCase {
     public static void removeCredentials() {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(config.getDeviceRegistryStable(),
+                .url(buildUrl(HonoConfiguration.getDeviceRegistryStable(),
                         PATH_CREDENTIALS + "EXPLEO_TENANT4" + "/" + "expleo2" + "/hashed-password"))
                 .delete()
                 .headers(getBaseRequestHeaders())
@@ -517,7 +503,7 @@ public class HonoApiTest extends AbstractTestCase {
     public void deleteDeviceCredentials() throws JSONException {
         // GIVEN
         Request request = new Request.Builder()
-                .url(buildUrl(config.getDeviceRegistryStable(),
+                .url(buildUrl(HonoConfiguration.getDeviceRegistryStable(),
                         PATH_CREDENTIALS + "EXPLEO_TENANT4" + "/" + "expleo2" + "/hashed-password"))
                 .delete()
                 .headers(getBaseRequestHeaders())
@@ -531,7 +517,7 @@ public class HonoApiTest extends AbstractTestCase {
         ResponseEntity<String> responseEntity = executeApiCall(request);
 
         // THEN
-        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCodeValue());
+        assertEquals(HttpStatus.NO_CONTENT.value(), responseEntity.getStatusCodeValue());
     }
 
 }

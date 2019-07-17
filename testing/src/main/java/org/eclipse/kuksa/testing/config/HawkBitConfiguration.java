@@ -15,12 +15,8 @@ package org.eclipse.kuksa.testing.config;
 import feign.auth.BasicAuthRequestInterceptor;
 import feign.codec.Encoder;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 
 @Component
 public class HawkBitConfiguration {

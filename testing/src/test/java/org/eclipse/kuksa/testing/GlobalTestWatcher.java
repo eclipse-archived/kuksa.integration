@@ -20,7 +20,7 @@ import org.junit.runner.Description;
 
 public class GlobalTestWatcher extends TestWatcher {
 
-	public static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	@Override
 	protected void succeeded(Description description) {

@@ -116,7 +116,7 @@ public class FeignMultipartEncoder implements Encoder {
         }
 
         @Override
-        public OutputStream getBody() throws IOException {
+        public OutputStream getBody() {
             return body;
         }
 
@@ -147,7 +147,7 @@ public class FeignMultipartEncoder implements Encoder {
         }
 
         @Override
-        public long contentLength() throws IOException {
+        public long contentLength() {
             return size;
         }
 

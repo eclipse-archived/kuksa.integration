@@ -14,33 +14,22 @@ package org.eclipse.kuksa.testing;
 
 import org.eclipse.kuksa.testing.client.Request;
 import org.eclipse.kuksa.testing.client.TestApiRunner;
-import org.eclipse.kuksa.testing.config.GlobalConfiguration;
-import org.eclipse.kuksa.testing.config.HawkbitMultiPartFileFeignClient;
 import org.eclipse.kuksa.testing.model.TestCase;
 import org.eclipse.kuksa.testing.model.TestSuite;
 import org.eclipse.kuksa.testing.model.YamlConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.*;
 import org.junit.rules.TestName;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.cloud.openfeign.FeignAutoConfiguration;
-import org.springframework.cloud.openfeign.ribbon.FeignRibbonClientAutoConfiguration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -50,7 +39,7 @@ import static org.junit.Assert.fail;
 
 /**
  * Parent class for all test cases which executes API-Calls. The
- * application.properties file will be used for test configuration. If necessary
+ * application.yml file will be used for test configuration. If necessary
  * these configuration can be overridden by an extra local.properties file in
  * the same directory.
  *
@@ -61,11 +50,8 @@ import static org.junit.Assert.fail;
 @EnableFeignClients
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-@TestPropertySource({"classpath:application.properties", "classpath:local.properties"})
+@TestPropertySource({"classpath:application.yml", "classpath:local.properties"})
 public abstract class AbstractTestCase {
-
-    protected static final String PROTOCOL_HTTP = "http://";
-    protected static final String PROTOCOL_TCP = "tcp://";
 
     private static final String TEST_RESULT_PATH = "src/test/resources/result/";
 
@@ -139,11 +125,7 @@ public abstract class AbstractTestCase {
 
     // UTIL
     protected static String buildUrl(String baseUrl, String path) {
-        return new StringBuilder().append(baseUrl).append(path).toString();
-    }
-
-    protected static String staticBuildUrl(String baseUrl, String path) {
-        return new StringBuilder().append(baseUrl).append(path).toString();
+        return baseUrl + path;
     }
 
     protected static HttpHeaders getBaseRequestHeaders() {
@@ -154,15 +136,7 @@ public abstract class AbstractTestCase {
         return headers;
     }
 
-    protected static HttpHeaders staticGetBaseRequestHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setContentLanguage(Locale.US);
-
-        return headers;
-    }
-
-    protected JSONObject getBodyAsJson(ResponseEntity<String> response) {
+    JSONObject getBodyAsJson(ResponseEntity<String> response) {
         return getBodyAsJson(response.getBody());
     }
 
@@ -176,27 +150,9 @@ public abstract class AbstractTestCase {
         return null;
     }
 
-    protected String getJsonValue(JSONObject json, String property) {
+    String getJsonValue(JSONObject json, String property) {
         try {
             return json.getString(property);
-        } catch (Exception e) {
-            LOGGER.error("Property " + property + "does not exist.", e);
-            fail();
-        }
-        return null;
-    }
-
-    protected MqttMessage setMqttMessage(String value) {
-        byte[] payload = value.getBytes();
-        MqttMessage msg = new MqttMessage(payload);
-        msg.setQos(0);
-        msg.setRetained(true);
-        return msg;
-    }
-
-    protected JSONObject getJsonObject(JSONObject json, String property) {
-        try {
-            return json.getJSONObject(property);
         } catch (Exception e) {
             LOGGER.error("Property " + property + "does not exist.", e);
             fail();

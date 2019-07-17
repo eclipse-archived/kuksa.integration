@@ -30,7 +30,7 @@ testCases:
     results:
     - statusCode: '201'
 
-  testPostTelemetryData:
+  testPublishTelemetryData:
     testData:
     - username: expleo2@EXPLEO_TENANT4
       password: whySoSecret
@@ -38,7 +38,7 @@ testCases:
     results:
     - statusCode: '202'
 
-  testPostEventData:
+  testPublishEventData:
     testData:
     - body: '{"weather":"snow"}'
       username: expleo2@EXPLEO_TENANT4

@@ -105,20 +105,20 @@
 		<dependency>
 			<groupId>org.eclipse.hono</groupId>
 			<artifactId>hono-client</artifactId>
-			<version>0.9</version>
+			<version>1.0-M2</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.hono</groupId>
 			<artifactId>hono-demo-certs</artifactId>
-			<version>0.9</version>
+			<version>1.0-M2</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.hono</groupId>
 			<artifactId>hono-legal</artifactId>
-			<version>0.9</version>
+			<version>1.0-M2</version>
 			<scope>provided</scope>
 		</dependency>
 

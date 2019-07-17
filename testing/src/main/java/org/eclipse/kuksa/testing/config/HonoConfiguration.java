@@ -13,7 +13,6 @@
 package org.eclipse.kuksa.testing.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,6 +28,18 @@ public final class HonoConfiguration {
 
 	@Value("${hono_adapter_mqtt_vertx}")
 	private static String hono_adapter_mqtt_vertx;
+
+	@Value("${hono_client_username}")
+	private static String hono_client_username;
+
+	@Value("${hono_client_password}")
+	private static String hono_client_password;
+
+	@Value("${hono_client_host}")
+	private static String hono_client_host;
+
+	@Value("${hono_client_port}")
+	private static int hono_client_port;
 
 	/**
 	 * @return the deviceRegistryStable
@@ -58,5 +69,6 @@ public final class HonoConfiguration {
 		return System.getProperty("hono_adapter_mqtt_vertx") == null ? hono_adapter_mqtt_vertx : System.getProperty("hono_adapter_mqtt_vertx");
 
 	}
+
 
 }

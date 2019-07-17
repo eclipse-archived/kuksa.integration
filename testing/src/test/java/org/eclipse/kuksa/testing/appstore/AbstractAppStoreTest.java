@@ -19,7 +19,6 @@ import org.eclipse.kuksa.testing.config.AppStoreConfiguration;
 import org.eclipse.kuksa.testing.model.Credentials;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,53 +29,53 @@ import java.util.Date;
 public abstract class AbstractAppStoreTest extends AbstractTestCase {
 
     // AppStore: /user
-    protected static final String JSON_PROPERTY_USER_USERNAME = "username";
-    protected static final String JSON_PROPERTY_USER_USERNAME_VALUE = "test.user.username";
+    static final String JSON_PROPERTY_USER_USERNAME = "username";
+    static final String JSON_PROPERTY_USER_USERNAME_VALUE = "test.user.username";
 
-    protected static final String JSON_PROPERTY_USER_PASSWORD = "password";
-    protected static final String JSON_PROPERTY_USER_PASSWORD_VALUE = "test.user.password";
+    static final String JSON_PROPERTY_USER_PASSWORD = "password";
+    static final String JSON_PROPERTY_USER_PASSWORD_VALUE = "test.user.password";
 
-    protected static final String JSON_PROPERTY_USER_USERTYPE = "userType";
-    protected static final String JSON_PROPERTY_USER_USERTYPE_VALUE = "Normal";
+    static final String JSON_PROPERTY_USER_USERTYPE = "userType";
+    static final String JSON_PROPERTY_USER_USERTYPE_VALUE = "Normal";
 
-    protected static final String JSON_PROPERTY_USER_ADMINUSER = "adminuser";
-    protected static final boolean JSON_PROPERTY_USER_ADMINUSER_VALUE = false;
+    static final String JSON_PROPERTY_USER_ADMINUSER = "adminuser";
+    static final boolean JSON_PROPERTY_USER_ADMINUSER_VALUE = false;
 
     // AppStore: /category
-    protected static final String JSON_PROPERTY_CATEGORY_NAME = "name";
-    protected static final String JSON_PROPERTY_CATEGORY_NAME_VALUE = "test.app.category";
+    static final String JSON_PROPERTY_CATEGORY_NAME = "name";
+    static final String JSON_PROPERTY_CATEGORY_NAME_VALUE = "test.app.category";
 
     // AppStore: /app
-    protected static final String JSON_PROPERTY_APP_NAME = "name";
-    protected static final String JSON_PROPERTY_APP_NAME_VALUE = "test.app.name";
+    static final String JSON_PROPERTY_APP_NAME = "name";
+    static final String JSON_PROPERTY_APP_NAME_VALUE = "test.app.name";
 
-    protected static final String JSON_PROPERTY_APP_VERSION = "version";
-    protected static final String JSON_PROPERTY_APP_VERSION_VALUE = "1.0";
+    static final String JSON_PROPERTY_APP_VERSION = "version";
+    static final String JSON_PROPERTY_APP_VERSION_VALUE = "1.0";
 
-    protected static final String JSON_PROPERTY_APP_HAWKBIT_NAME = "hawkbitname";
-    protected static final String JSON_PROPERTY_APP_HAWKBIT_NAME_VALUE = "test.app.hawkbit.name";
+    static final String JSON_PROPERTY_APP_HAWKBIT_NAME = "hawkbitname";
+    static final String JSON_PROPERTY_APP_HAWKBIT_NAME_VALUE = "test.app.hawkbit.name";
 
-    protected static final String JSON_PROPERTY_APP_DESCRIPTION = "description";
-    protected static final String JSON_PROPERTY_APP_DESCRIPTION_VALUE = "test.app.description";
+    static final String JSON_PROPERTY_APP_DESCRIPTION = "description";
+    static final String JSON_PROPERTY_APP_DESCRIPTION_VALUE = "test.app.description";
 
-    protected static final String JSON_PROPERTY_APP_OWNER = "owner";
-    protected static final String JSON_PROPERTY_APP_OWNER_VALUE = "test.app.owner";
+    static final String JSON_PROPERTY_APP_OWNER = "owner";
+    static final String JSON_PROPERTY_APP_OWNER_VALUE = "test.app.owner";
 
-    protected static final String JSON_PROPERTY_APP_DOWNLOADCOUNT = "downloadcount";
-    protected static final int JSON_PROPERTY_DOWNLOADCOUNT_VALUE = 0;
+    static final String JSON_PROPERTY_APP_DOWNLOADCOUNT = "downloadcount";
+    static final int JSON_PROPERTY_DOWNLOADCOUNT_VALUE = 0;
 
-    protected static final String JSON_PROPERTY_APP_PUBLISH_DATE = "publishdate";
-    protected static final Long JSON_PROPERTY_APP_PUBLISH_DATE_VALUE = new Date().getTime(); // today
+    static final String JSON_PROPERTY_APP_PUBLISH_DATE = "publishdate";
+    static final Long JSON_PROPERTY_APP_PUBLISH_DATE_VALUE = new Date().getTime(); // today
 
-    protected static final String JSON_PROPERTY_APP_CATEGORY_NAME = "appcategory";
-    protected static JSONObject JSON_PROPERTY_APP_CATEGORY_NAME_VALUE = new JSONObject();
+    static final String JSON_PROPERTY_APP_CATEGORY_NAME = "appcategory";
+    static JSONObject JSON_PROPERTY_APP_CATEGORY_NAME_VALUE = new JSONObject();
 
     @Autowired
     private AppStoreConfiguration appstoreConfig;
 
-    protected String address;
+    String address;
 
-    protected Credentials credentials;
+    Credentials credentials;
 
     @Override
     protected void testSetup() throws Exception {
@@ -84,13 +83,13 @@ public abstract class AbstractAppStoreTest extends AbstractTestCase {
         credentials = new Credentials(appstoreConfig.getUsername(), appstoreConfig.getPassword());
     }
 
-    protected Request.Builder getBaseRequestBuilder() {
+    Request.Builder getBaseRequestBuilder() {
         return new Request.Builder()
                 .headers(getBaseRequestHeaders())
                 .credentials(credentials);
     }
 
-    protected String createUser() throws JSONException {
+    String createUser() throws JSONException {
         Request request = getBaseRequestBuilder()
                 .post()
                 .url(buildUrl(address, "/api/1.0/user/"))
@@ -112,7 +111,7 @@ public abstract class AbstractAppStoreTest extends AbstractTestCase {
         return response.getBody();
     }
 
-    protected void removeUser(Long userId) {
+    void removeUser(Long userId) {
         Request request = getBaseRequestBuilder()
                 .delete()
                 .url(buildUrl(address, "/api/1.0/user/" + userId))
@@ -125,7 +124,7 @@ public abstract class AbstractAppStoreTest extends AbstractTestCase {
         }
     }
 
-    protected void removeOEM(Long oemId) {
+    void removeOEM(Long oemId) {
         Request request = getBaseRequestBuilder()
                 .delete()
                 .url(buildUrl(address, "/api/1.0/oem/" + oemId))
@@ -138,7 +137,7 @@ public abstract class AbstractAppStoreTest extends AbstractTestCase {
         }
     }
 
-    protected String createCategory() throws JSONException {
+    String createCategory() throws JSONException {
         Request request = getBaseRequestBuilder()
                 .post()
                 .url(buildUrl(address, "/api/1.0/appcategory/"))
@@ -157,7 +156,7 @@ public abstract class AbstractAppStoreTest extends AbstractTestCase {
         return response.getBody();
     }
 
-    protected void removeCategory(Long categoryId) {
+    void removeCategory(Long categoryId) {
         Request request = getBaseRequestBuilder()
                 .delete()
                 .url(buildUrl(address, "/api/1.0/appcategory/" + categoryId))
@@ -170,7 +169,7 @@ public abstract class AbstractAppStoreTest extends AbstractTestCase {
         }
     }
 
-    protected String createApp(Long categoryId) throws JSONException {
+    String createApp(Long categoryId) throws JSONException {
         try {
             JSON_PROPERTY_APP_CATEGORY_NAME_VALUE = new JSONObject().put("id", categoryId ).put("name", "test.app.category");
         } catch (JSONException e) {
@@ -203,7 +202,7 @@ public abstract class AbstractAppStoreTest extends AbstractTestCase {
         return response.getBody();
     }
 
-    protected String removeApp(Long appId) {
+    void removeApp(Long appId) {
         Request request = getBaseRequestBuilder()
                 .delete()
                 .url(buildUrl(address, "/api/1.0/app/" + appId))
@@ -214,8 +213,6 @@ public abstract class AbstractAppStoreTest extends AbstractTestCase {
         if (!response.getStatusCode().is2xxSuccessful()) {
             LOGGER.error(new Exception("Failed to remove app store app."));
         }
-
-        return response.getBody();
     }
 
 
