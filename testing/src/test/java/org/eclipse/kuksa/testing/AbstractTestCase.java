@@ -12,6 +12,7 @@
 
 package org.eclipse.kuksa.testing;
 
+import org.apache.logging.log4j.Level;
 import org.eclipse.kuksa.testing.client.Request;
 import org.eclipse.kuksa.testing.client.TestApiRunner;
 import org.eclipse.kuksa.testing.model.TestCase;
@@ -43,7 +44,7 @@ import static org.junit.Assert.fail;
  * these configuration can be overridden by an extra local.properties file in
  * the same directory.
  *
- * @author cnguyen
+ * @author cnguyen, alezor
  */
 
 
@@ -77,6 +78,9 @@ public abstract class AbstractTestCase {
      */
     @Before
     public final void initialize() throws Exception {
+
+        // org.apache.logging.log4j.Level.OFF;
+
         LOGGER.debug("SETUP START");
         if (testSuite == null) {
             String file = TEST_RESULT_PATH + getTestFile();

@@ -16,9 +16,11 @@ import feign.auth.BasicAuthRequestInterceptor;
 import feign.codec.Encoder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @Component
+@Configuration
 public class HawkBitConfiguration {
 	@Value("${hawkbit.tenant}")
 	private String tenant;
@@ -80,6 +82,10 @@ public class HawkBitConfiguration {
 
 	}
 
+	@Bean
+	feign.Logger.Level feignLoggerLevel() {
+		return feign.Logger.Level.NONE;
+	}
 
 	@Bean
 	public BasicAuthRequestInterceptor basicAuthRequestInterceptor() {

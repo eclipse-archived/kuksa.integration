@@ -44,3 +44,13 @@ feign:
         connectTimeout: 5000
         readTimeout: 5000
         loggerLevel: none
+
+logging:
+  level:
+    org.eclipse.kuksa.testing.config.HawkbitMultiPartFileFeignClient: DEBUG
+    root: OFF
+    org.springframework: OFF
+
+logger:
+  file:
+    level: off

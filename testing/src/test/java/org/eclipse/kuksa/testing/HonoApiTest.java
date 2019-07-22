@@ -91,9 +91,9 @@ public class HonoApiTest extends AbstractTestCase {
             sslProperties.put(SSLSocketFactoryFactory.CLIENTAUTH, false);
             options.setSSLProperties(sslProperties);
             // actually connect the client
-            client.connect(options);
-
             // receive
+            client.setManualAcks(false);
+
             client.setCallback(new MqttCallback() {
                 @Override
                 public void connectionLost(Throwable throwable) {
@@ -101,32 +101,37 @@ public class HonoApiTest extends AbstractTestCase {
                 }
 
                 @Override
-                public void messageArrived(String s, MqttMessage mqttMessage) {
-                    System.out.println("MQTT Message arrived successfully: " + mqttMessage);
+                public void messageArrived(String s, MqttMessage mqttMessage) throws MqttException {
+                    System.out.println("MQTT Message " +  mqttMessage.getId()+ " arrived successfully: " + mqttMessage);
                     message = mqttMessage;
+                    //mqttMessage.notify();
+                    client.messageArrivedComplete(mqttMessage.getId(), 1);
                     assertNotNull(mqttMessage.getPayload());
                 }
 
                 @Override
-                public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+                public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken)  {
                     try {
                         System.out.println("MQTT Message delivery completed " + iMqttDeliveryToken.getMessage());
                     } catch (MqttException e) {
                         e.printStackTrace();
                     }
+                    System.out.println(iMqttDeliveryToken.getResponse());
                     assertTrue(iMqttDeliveryToken.isComplete());
                 }
             });
 
-            CountDownLatch receivedSignal = new CountDownLatch(1);
+            client.connectWithResult(options);
 
-            client.subscribe(PATH_CONTROL, (topic, msg) -> {
+            CountDownLatch receivedSignal = new CountDownLatch(11);
+
+            client.subscribeWithResponse(PATH_CONTROL, 1, (topic, msg) -> {
                 receivedSignal.countDown();
                 System.out.println("Something arrived at : " + PATH_CONTROL + msg.toString());
 
             });
 
-            receivedSignal.await(15, TimeUnit.SECONDS);
+            receivedSignal.await(11, TimeUnit.SECONDS);
 
         } catch (MqttException e) {
             e.printStackTrace();
@@ -351,7 +356,8 @@ public class HonoApiTest extends AbstractTestCase {
     }
 
     @Test
-    public void testPublishControlData() {
+    public void testPublishControlData() throws MqttException {
+    //    client.publish("control///req/" + client.getPendingDeliveryTokens() + "requestCommand", message);
         assertNotNull(message.getPayload());
     }
 

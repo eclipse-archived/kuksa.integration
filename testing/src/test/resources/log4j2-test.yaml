@@ -30,7 +30,7 @@ Configutation:
   Loggers:
     Logger:
       name: com.eclipse
-      level: all
+      level: off
       additivity: false
       AppenderRef:
       - ref: Console_Appender

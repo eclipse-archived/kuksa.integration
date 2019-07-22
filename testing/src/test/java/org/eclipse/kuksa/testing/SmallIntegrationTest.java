@@ -38,7 +38,6 @@ import static org.junit.Assert.fail;
 
 import feign.Response;
 
-@Ignore
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {GlobalConfiguration.class, HawkBitConfiguration.class, AppStoreConfiguration.class, HawkbitMultiPartFileFeignClient.class})
 public class SmallIntegrationTest extends AbstractTestCase {

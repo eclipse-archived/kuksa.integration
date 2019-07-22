@@ -22,14 +22,9 @@ pipeline {
                 }
                 stage ("Run Hono-Consumer") {
                     steps {
-                	git 'https://github.com/eclipse/hono.git'
-                        sh """cd hono/cli && \
-                        mvn spring-boot:run -Dhono.client.host=${hono_client_host} \
-                        -Dhono.client.port=${hono_client_port} \
-                        -Dhono.client.username=${hono_client_username} \
-                        -Dhono.client.password=${hono_client_password} \
-                        -Dhono.client.trustStorePath=${hono_client_trustStorePath} \
-                        -Drun.profiles=${run_profiles} \
+                        sh """cd testing && \
+			export JAVA_HOME=/opt/tools/java/openjdk/latest && \
+                        java -jar hono-cli-1.0-M3-exec.jar \
                         """
                     }
                 }
