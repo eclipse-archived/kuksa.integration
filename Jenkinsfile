@@ -15,7 +15,7 @@ pipeline {
             parallel {
                 stage ("Run Suite") {
                     steps {
-                	      git 'https://github.com/eclipse/kuksa.integration.git'
+                	git 'https://github.com/eclipse/kuksa.integration.git'
                         sh """cd testing && \
                         export JAVA_HOME=/opt/tools/java/openjdk/latest && \
                         /opt/tools/apache-maven/latest/bin/mvn --batch-mode clean test \
