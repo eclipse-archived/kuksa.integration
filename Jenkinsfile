@@ -35,8 +35,7 @@ pipeline {
                 stage ("Run Hono-Consumer") {
                     steps {
                         sh """cd testing && \
-			export JAVA_HOME=/opt/tools/java/openjdk/latest && \
-                        java -jar hono-cli-1.0-M3-exec.jar \
+			/opt/tools/java/openjdk/latest/bin/java -jar hono-cli-1.0-M3-exec.jar \
                         """
                     }
                 }
