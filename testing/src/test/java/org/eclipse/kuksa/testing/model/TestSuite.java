@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class TestSuite {
 
-	// mapping of test name and test result(s)
+	// mapping of test name and test testData(s)
 	private Map<String, TestCase> testCases;
 
 	/**

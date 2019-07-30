@@ -1,0 +1,15 @@
+testCases:
+  testCreateOem:
+    results:
+    - url: /api/1.0/oem
+      httpMethod: POST
+      statusCode: 201
+      header: null
+      body: null
+  testGetOem:
+    results:
+    - url: /api/1.0/oems
+      httpMethod: GET
+      statusCode: 200
+      header: null
+      body: null

@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Expleo Germany GmbH
+ * @author: alezor
  **********************************************************************/
 
 package org.eclipse.kuksa.testing;
@@ -16,6 +17,7 @@ import org.apache.logging.log4j.Level;
 import org.eclipse.kuksa.testing.client.Request;
 import org.eclipse.kuksa.testing.config.*;
 import org.eclipse.kuksa.testing.model.Credentials;
+import org.eclipse.kuksa.testing.model.TestData;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,7 +29,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.*;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.Date;
@@ -37,11 +38,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import feign.Response;
+import org.springframework.web.multipart.MultipartFile;
 
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {GlobalConfiguration.class, HawkBitConfiguration.class, AppStoreConfiguration.class, HawkbitMultiPartFileFeignClient.class})
 public class SmallIntegrationTest extends AbstractTestCase {
-
+    private static final String JSON_PROPERTY_ID = "id";
 
     private static String securityToken;
 
@@ -55,11 +57,9 @@ public class SmallIntegrationTest extends AbstractTestCase {
 
     private static String controllerId;
 
-    private static final String JSON_PROPERTY_ID = "id";
+    private static String appname;
 
-    private static String appName = "IntApp" + new Random().nextInt(1000);
-
-    private static String deviceId = "OEM_Integration3";
+    private static String deviceId;
 
     private static Long userId;
 
@@ -77,47 +77,6 @@ public class SmallIntegrationTest extends AbstractTestCase {
 
     private static JSONObject app;
 
-
-    private static final String JSON_PROPERTY_USER_USERNAME = "username";
-    private static final String JSON_PROPERTY_USER_USERNAME_VALUE = "testuser3";
-
-    private static final String JSON_PROPERTY_USER_PASSWORD = "password";
-    private static final String JSON_PROPERTY_USER_PASSWORD_VALUE = "testpassword";
-
-    private static final String JSON_PROPERTY_USER_USERTYPE = "userType";
-    private static final String JSON_PROPERTY_USER_USERTYPE_VALUE = "Normal";
-
-    private static final String JSON_PROPERTY_USER_ADMINUSER = "adminuser";
-    private static final boolean JSON_PROPERTY_USER_ADMINUSER_VALUE = false;
-
-    // Hawkbit: /app
-    private static final String JSON_PROPERTY_APP_HAWKBIT_NAME = "hawkbitname";
-    private static final String JSON_PROPERTY_APP_HAWKBIT_NAME_VALUE = appName;
-
-    // AppStore: /category
-    private static final String JSON_PROPERTY_CATEGORY_NAME = "name";
-    private static final String JSON_PROPERTY_CATEGORY_NAME_VALUE = "TestCategory2";
-
-    // AppStore: /app
-    private static final String JSON_PROPERTY_APP_NAME = "name";
-    private static final String JSON_PROPERTY_APP_NAME_VALUE = appName;
-
-    private static final String JSON_PROPERTY_APP_VERSION = "version";
-    private static final String JSON_PROPERTY_APP_VERSION_VALUE = "1.0";
-
-    private static final String JSON_PROPERTY_APP_DESCRIPTION = "description";
-    private static final String JSON_PROPERTY_APP_DESCRIPTION_VALUE = JSON_PROPERTY_USER_USERNAME_VALUE;
-
-    private static final String JSON_PROPERTY_APP_OWNER = "owner";
-    private static final String JSON_PROPERTY_APP_OWNER_VALUE = "OEM_EXPLEO";
-
-    private static final String JSON_PROPERTY_APP_DOWNLOADCOUNT = "downloadcount";
-    private static final int JSON_PROPERTY_DOWNLOADCOUNT_VALUE = 0;
-
-    private static final String JSON_PROPERTY_APP_PUBLISH_DATE = "publishdate";
-    private static final Long JSON_PROPERTY_APP_PUBLISH_DATE_VALUE = new Date().getTime(); // today
-
-    private static final String JSON_PROPERTY_APP_CATEGORY_NAME = "appcategory";
     private static JSONObject JSON_PROPERTY_APP_CATEGORY_NAME_VALUE = new JSONObject();
 
     @Autowired
@@ -132,10 +91,20 @@ public class SmallIntegrationTest extends AbstractTestCase {
     @Autowired
     private HawkbitMultiPartFileFeignClient hawkbitMultiPartFileFeignClient;
 
+    @Override
+    protected String getTestFile() {
+        return "SmallIntegration-TestSuite.yaml";
+    }
 
     @Test
     @Order(1)
     public void integrationSetup() throws Exception {
+        TestData testData = testCase.getTestData(0);
+
+        appname = testData.getAppname() + new Random().nextInt(1000);
+
+        deviceId = testData.getDeviceId();
+
         System.out.println("SETUP START");
 
         hawkbitAddress = hawkbitConfig.getAddress();
@@ -146,19 +115,18 @@ public class SmallIntegrationTest extends AbstractTestCase {
 
         System.out.println("CREATING USER");
 
-        user = new JSONObject(createUser());
-        System.out.println(user);
+        user = new JSONObject(createUser(testData.getUsername(), testData.getPassword(), testData.getUserType()));
         userId = user.getLong(JSON_PROPERTY_ID);
-        userName = user.getString(JSON_PROPERTY_USER_USERNAME);
+        userName = user.getString("username");
 
         System.out.println("CREATING CATEGORY");
 
-        category = new JSONObject(createCategory());
+        category = new JSONObject(createCategory(testData.getCategory()));
         categoryId = category.getLong(JSON_PROPERTY_ID);
 
         System.out.println("CREATING APP");
 
-        app = new JSONObject(createApp(categoryId));
+        app = new JSONObject(createApp(categoryId, testData.getVersion(), testData.getOwner(), testData.getUsername(), appname));
         appId = app.getLong(JSON_PROPERTY_ID) ;
 
         System.out.println("userId " + userId + " categoryId " + categoryId + " appId " + appId);
@@ -179,7 +147,7 @@ public class SmallIntegrationTest extends AbstractTestCase {
             System.out.println(body);
         }
 
-        updateTarget();
+        updateTarget(testData.getAuthToken());
         getSoftwareModule();
     }
 
@@ -195,24 +163,16 @@ public class SmallIntegrationTest extends AbstractTestCase {
         }
     }
 
-    @Override
-    protected String getTestFile() {
-        return "SmallIntegration-TestSuite.yaml";
-    }
-
     public boolean testCheckForTarget() throws JSONException {
         HttpHeaders headers = new HttpHeaders(getBaseRequestHeaders());
         headers.setBasicAuth("admin", "admin");
 
-
-        // GIVEN
         Request request = new Request.Builder()
                 .url(buildUrl(hawkbitConfig.getAddress(),  "/rest/v1/targets"))
                 .get()
                 .headers(headers)
                 .build();
 
-        // WHEN
         ResponseEntity<String> responseEntity = executeApiCall(request);
 
         System.out.println(responseEntity.getBody());
@@ -230,12 +190,9 @@ public class SmallIntegrationTest extends AbstractTestCase {
             }
         }
         return false;
-
     }
 
     public void testGetTargetInfo() {
-        // GIVEN
-
         Request request = new Request.Builder()
                 .url(buildUrl(hawkbitConfig.getAddress(),  "/rest/controller/v1/" + controllerId))
                 .get()
@@ -243,16 +200,13 @@ public class SmallIntegrationTest extends AbstractTestCase {
                 .addHeader("Authorization", "TargetToken " + securityToken)
                 .build();
 
-        // WHEN
         ResponseEntity<String> responseEntity = executeApiCall(request);
 
-        // THEN
         String body = responseEntity.getBody();
         assertNotNull(body);
     }
 
     public void getSoftwareModule() throws Exception {
-        // GIVEN
         System.out.println("GETTING OUR NEW SOFTWAREMODULE");
 
         Request request = new Request.Builder()
@@ -262,14 +216,13 @@ public class SmallIntegrationTest extends AbstractTestCase {
                 .headers(getBaseRequestHeaders())
                 .build();
 
-        // WHEN
         ResponseEntity<String> responseEntity = executeApiCall(request);
 
         JSONArray array = new JSONObject(responseEntity.getBody()).getJSONArray("content");
         for (int i = 0; i < array.length(); i++) {
             JSONObject row = array.getJSONObject(i);
             System.out.println(row + "\n\n");
-            if(row.getString("name").equals(JSON_PROPERTY_APP_NAME_VALUE)) {
+            if(row.getString("name").equals(appname)) {
                 softwareModuleId = row.getLong("id");
             }
         }
@@ -362,14 +315,14 @@ public class SmallIntegrationTest extends AbstractTestCase {
         return responseEntity.getBody();
     }
 
-    public void updateTarget() throws JSONException {
+    public void updateTarget(String authToken) throws JSONException {
 
         Request request = new Request.Builder()
                 .url(buildUrl(hawkbitAddress, "rest/v1/targets/" + controllerId))
                 .put()
                 .credentials(hawkbitCredentials)
                 .body(new JSONObject()
-                        .put("securityToken", "78d06ca7aba7405ffd0dd82d24408fe6")
+                        .put("securityToken", authToken)
                         .put( "requestAttributes", true)
                         .put("controllerId", controllerId)
                         .put("name", controllerId)
@@ -386,7 +339,8 @@ public class SmallIntegrationTest extends AbstractTestCase {
     public void testPurchaseApp() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBasicAuth("admin", "admin");
+        headers.setBasicAuth(appstoreCredentials.getUsername(), appstoreCredentials.getPassword());
+
         Request request = getBaseRequestBuilder()
                 .post()
                 .url(buildUrl(appstoreAddress, "/api/1.0/app/" + appId + "/purchase/" + userId))
@@ -404,7 +358,7 @@ public class SmallIntegrationTest extends AbstractTestCase {
     public void installationTest() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBasicAuth("admin", "admin");
+        headers.setBasicAuth(appstoreCredentials.getUsername(), appstoreCredentials.getPassword());
 
         System.out.println("Installing app to " + controllerId);
 
@@ -420,10 +374,9 @@ public class SmallIntegrationTest extends AbstractTestCase {
 
         System.out.println(responseEntity.getBody());
 
+        System.out.println("Waiting for success response from device");
         Thread.sleep(20000);
     }
-
-
 
     private static Request.Builder getBaseRequestBuilder() {
         return new Request.Builder()
@@ -431,16 +384,15 @@ public class SmallIntegrationTest extends AbstractTestCase {
                 .credentials(hawkbitCredentials);
     }
 
-
-    private static String createUser() throws JSONException {
+    private static String createUser(String username, String password, String userType) throws JSONException {
         Request request = getBaseRequestBuilder()
                 .post()
                 .url(buildUrl(appstoreAddress, "/api/1.0/user/"))
                 .body(new JSONObject()
-                        .put(JSON_PROPERTY_USER_ADMINUSER, JSON_PROPERTY_USER_ADMINUSER_VALUE)
-                        .put(JSON_PROPERTY_USER_USERNAME, JSON_PROPERTY_USER_USERNAME_VALUE)
-                        .put(JSON_PROPERTY_USER_PASSWORD, JSON_PROPERTY_USER_PASSWORD_VALUE)
-                        .put(JSON_PROPERTY_USER_USERTYPE, JSON_PROPERTY_USER_USERTYPE_VALUE)
+                        .put("adminuser", false)
+                        .put("username", username)
+                        .put("password", password)
+                        .put("userType", userType)
                 )
                 .build();
 
@@ -454,12 +406,12 @@ public class SmallIntegrationTest extends AbstractTestCase {
         return response.getBody();
     }
 
-    private static String createCategory() throws JSONException {
+    private static String createCategory(String category) throws JSONException {
         Request request = getBaseRequestBuilder()
                 .post()
                 .url(buildUrl(appstoreAddress, "/api/1.0/appcategory/"))
                 .body(new JSONObject()
-                        .put(JSON_PROPERTY_CATEGORY_NAME, JSON_PROPERTY_CATEGORY_NAME_VALUE)
+                        .put("name", category)
                 )
                 .build();
 
@@ -473,27 +425,25 @@ public class SmallIntegrationTest extends AbstractTestCase {
         return response.getBody();
     }
 
-    private static String createApp(Long categoryId) throws JSONException {
+    private static String createApp(Long categoryId, String version, String owner, String description, String appname) throws JSONException {
         try {
             JSON_PROPERTY_APP_CATEGORY_NAME_VALUE = new JSONObject().put("id", categoryId ).put("name", category.getString("name"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        System.out.println(JSON_PROPERTY_APP_CATEGORY_NAME_VALUE);
-
         Request request = getBaseRequestBuilder()
                 .post()
                 .url(buildUrl(appstoreAddress, "/api/1.0/app/"))
                 .body(new JSONObject()
-                        .put(JSON_PROPERTY_APP_NAME, JSON_PROPERTY_APP_NAME_VALUE)
-                        .put(JSON_PROPERTY_APP_VERSION, JSON_PROPERTY_APP_VERSION_VALUE)
-                        .put(JSON_PROPERTY_APP_DESCRIPTION, JSON_PROPERTY_APP_DESCRIPTION_VALUE)
-                        .put(JSON_PROPERTY_APP_HAWKBIT_NAME, JSON_PROPERTY_APP_HAWKBIT_NAME_VALUE)
-                        .put(JSON_PROPERTY_APP_OWNER, JSON_PROPERTY_APP_OWNER_VALUE )
-                        .put(JSON_PROPERTY_APP_CATEGORY_NAME, JSON_PROPERTY_APP_CATEGORY_NAME_VALUE )
-                        .put(JSON_PROPERTY_APP_DOWNLOADCOUNT, JSON_PROPERTY_DOWNLOADCOUNT_VALUE )
-                        .put(JSON_PROPERTY_APP_PUBLISH_DATE, JSON_PROPERTY_APP_PUBLISH_DATE_VALUE)
+                        .put("name", appname)
+                        .put("version", version)
+                        .put("description", description)
+                        .put("hawkbitname", appname)
+                        .put("owner", owner )
+                        .put("appcategory", JSON_PROPERTY_APP_CATEGORY_NAME_VALUE )
+                        .put("downloadcount", 0 )
+                        .put("publishdate", new Date().getTime())
                 )
                 .build();
 

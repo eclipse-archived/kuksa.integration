@@ -24,7 +24,6 @@ import java.util.Date;
 
 import static org.junit.Assert.*;
 
-
 public class AppStoreAppTest extends AbstractAppStoreTest {
 
     private static final String JSON_PROPERTY_ID = "id";

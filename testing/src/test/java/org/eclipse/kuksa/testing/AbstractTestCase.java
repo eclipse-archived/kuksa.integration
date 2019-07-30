@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Expleo Germany GmbH
+ * @author: cnguyen
  **********************************************************************/
 
 package org.eclipse.kuksa.testing;
@@ -54,7 +55,7 @@ import static org.junit.Assert.fail;
 @TestPropertySource({"classpath:application.yml", "classpath:local.properties"})
 public abstract class AbstractTestCase {
 
-    private static final String TEST_RESULT_PATH = "src/test/resources/result/";
+    private static final String TEST_RESULT_PATH = "src/test/resources/testData/";
 
     public static final Logger LOGGER = LogManager.getLogger();
 
@@ -78,8 +79,6 @@ public abstract class AbstractTestCase {
      */
     @Before
     public final void initialize() throws Exception {
-
-        // org.apache.logging.log4j.Level.OFF;
 
         LOGGER.debug("SETUP START");
         if (testSuite == null) {

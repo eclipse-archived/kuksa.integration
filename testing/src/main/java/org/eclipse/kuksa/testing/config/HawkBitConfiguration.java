@@ -14,6 +14,7 @@ package org.eclipse.kuksa.testing.config;
 
 import feign.auth.BasicAuthRequestInterceptor;
 import feign.codec.Encoder;
+import org.eclipse.kuksa.testing.FeignMultipartEncoder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

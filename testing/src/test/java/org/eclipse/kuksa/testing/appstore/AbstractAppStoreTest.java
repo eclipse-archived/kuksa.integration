@@ -8,6 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Expleo Germany GmbH
+ * @author: cnguyen
  **********************************************************************/
 
 package  org.eclipse.kuksa.testing.appstore;
