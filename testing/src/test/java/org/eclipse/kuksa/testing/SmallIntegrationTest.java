@@ -40,6 +40,7 @@ import static org.junit.Assert.fail;
 import feign.Response;
 import org.springframework.web.multipart.MultipartFile;
 
+@Ignore
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {GlobalConfiguration.class, HawkBitConfiguration.class, AppStoreConfiguration.class, HawkbitMultiPartFileFeignClient.class})
 public class SmallIntegrationTest extends AbstractTestCase {
@@ -231,7 +232,7 @@ public class SmallIntegrationTest extends AbstractTestCase {
 
     public void uploadArtifactToHawkbit() {
         ClassLoader classLoader = new HonoConfiguration().getClass().getClassLoader();
-        File file = new File(classLoader.getResource("DOCKER_dashboard_arm.tar").getFile());
+        File file = new File(classLoader.getResource("dummy").getFile());
 
         MultipartFile imageFile = new MultipartFile() {
 
