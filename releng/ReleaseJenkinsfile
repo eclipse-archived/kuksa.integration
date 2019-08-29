@@ -38,7 +38,9 @@ spec:
             sh 'mkdir release && mkdir release/utils && mkdir release/examples && mkdir release/utils/hono-influxdb-connector && mkdir release/examples/malfunction-indicator-light && mkdir release/kuksa-appstore && mkdir integration'
             dir('integration') {
                 git url: 'https://github.com/eclipse/kuksa.integration.git'
-                sh 'cat README.md' 
+            }
+            dir('integration/releng') {
+              sh 'cp Readme_Release-0.1.0.md ../../release/'
             }
             dir('kuksa-appstore') {
                 sh 'sh build.sh'
