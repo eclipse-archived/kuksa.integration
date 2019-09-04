@@ -18,8 +18,10 @@ import org.eclipse.kuksa.testing.AbstractTestCase;
 import org.eclipse.kuksa.testing.client.Request;
 import org.eclipse.kuksa.testing.config.AppStoreConfiguration;
 import org.eclipse.kuksa.testing.model.Credentials;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
@@ -70,6 +72,12 @@ public abstract class AbstractAppStoreTest extends AbstractTestCase {
 
     static final String JSON_PROPERTY_APP_CATEGORY_NAME = "appcategory";
     static JSONObject JSON_PROPERTY_APP_CATEGORY_NAME_VALUE = new JSONObject();
+
+    private Long userId;
+
+    private Long categoryId;
+
+    private Long appId;
 
     @Autowired
     private AppStoreConfiguration appstoreConfig;
@@ -216,6 +224,110 @@ public abstract class AbstractAppStoreTest extends AbstractTestCase {
         }
     }
 
+    public Long checkUsernameExists() throws Exception  {
+        Request request = getBaseRequestBuilder()
+                .get()
+                .url(buildUrl(address, "/api/1.0/user"))
+                .build();
 
+        ResponseEntity<String> response = executeApiCall(request);
+
+        int totalPages =  new JSONObject(response.getBody()).getInt("totalPages");
+
+        for(int i = 0; i < totalPages; i++) {
+            Request requestPage = getBaseRequestBuilder()
+                    .get()
+                    .url(buildUrl(address, "/api/1.0/user?page=" + i))
+                    .build();
+
+            ResponseEntity<String> responsePage = executeApiCall(requestPage);
+
+            JSONArray array = new JSONObject(responsePage.getBody()).getJSONArray("content");
+            for (int j = 0; j < array.length(); j++) {
+                JSONObject row = array.getJSONObject(j);
+                if(row.getString("username").equals(JSON_PROPERTY_USER_USERNAME_VALUE)) {
+
+                    userId = row.getLong("id");
+                }
+            }
+        }
+
+        if(userId != null) {
+            return userId;
+        } else {
+            return null;
+        }
+    }
+
+    public Long checkCategoryExists() throws Exception {
+
+        Request request = getBaseRequestBuilder()
+                .get()
+                .url(buildUrl(address, "/api/1.0/appcategory"))
+                .build();
+
+        ResponseEntity<String> response = executeApiCall(request);
+
+        int totalPages =  new JSONObject(response.getBody()).getInt("totalPages");
+
+        for(int i = 0; i < totalPages; i++) {
+            Request requestPage = getBaseRequestBuilder()
+                    .get()
+                    .url(buildUrl(address, "/api/1.0/appcategory?page=" + i))
+                    .build();
+
+            ResponseEntity<String> responsePage = executeApiCall(requestPage);
+
+            JSONArray array = new JSONObject(responsePage.getBody()).getJSONArray("content");
+            for (int j = 0; j < array.length(); j++) {
+                JSONObject row = array.getJSONObject(j);
+                if(row.getString("name").equals(JSON_PROPERTY_CATEGORY_NAME_VALUE)) {
+
+                    categoryId = row.getLong("id");
+                }
+            }
+        }
+
+        if(categoryId != null) {
+            return categoryId;
+        } else {
+            return null;
+        }
+    }
+
+    public Long checkAppExists() throws Exception {
+        Request request = getBaseRequestBuilder()
+                .get()
+                .url(buildUrl(address, "/api/1.0/app"))
+                .build();
+
+        ResponseEntity<String> response = executeApiCall(request);
+
+        int totalPages =  new JSONObject(response.getBody()).getInt("totalPages");
+
+        for(int i = 0; i < totalPages; i++) {
+            Request requestPage = getBaseRequestBuilder()
+                    .get()
+                    .url(buildUrl(address, "/api/1.0/app?page=" + i))
+                    .build();
+
+            ResponseEntity<String> responsePage = executeApiCall(requestPage);
+
+            JSONArray array = new JSONObject(responsePage.getBody()).getJSONArray("content");
+            for (int j = 0; j < array.length(); j++) {
+                JSONObject row = array.getJSONObject(j);
+                if(row.getString("name").equals(JSON_PROPERTY_APP_NAME_VALUE)) {
+
+                    appId = row.getLong("id");
+                }
+            }
+        }
+
+        if(appId != null) {
+            return appId;
+        } else {
+            return null;
+        }
+    }
 
 }

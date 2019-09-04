@@ -49,6 +49,18 @@ public class AppStoreAppTest extends AbstractAppStoreTest {
     protected void testSetup() throws Exception {
         super.testSetup();
 
+        if(checkAppExists() != null) {
+            removeApp(checkAppExists());
+        }
+
+        if(checkUsernameExists() != null) {
+            removeUser(checkUsernameExists());
+        }
+
+        if(checkCategoryExists() != null) {
+            removeCategory(checkCategoryExists());
+        }
+
         user = new JSONObject(createUser());
         userId = user.getLong(JSON_PROPERTY_ID);
 

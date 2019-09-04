@@ -36,6 +36,11 @@ public class AppStoreCategoryTest extends AbstractAppStoreTest {
     @Override
     protected void testSetup() throws Exception {
         super.testSetup();
+
+        if(checkCategoryExists() != null) {
+            removeCategory(checkCategoryExists());
+        }
+
         String body = createCategory();
         JSONObject jsonObject = new JSONObject(body);
         categoryId = jsonObject.getLong(JSON_PROPERTY_ID);

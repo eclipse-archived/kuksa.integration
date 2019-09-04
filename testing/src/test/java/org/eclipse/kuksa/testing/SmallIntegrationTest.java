@@ -40,7 +40,6 @@ import static org.junit.Assert.fail;
 import feign.Response;
 import org.springframework.web.multipart.MultipartFile;
 
-@Ignore
 @EnableAutoConfiguration
 @ContextConfiguration(classes = {GlobalConfiguration.class, HawkBitConfiguration.class, AppStoreConfiguration.class, HawkbitMultiPartFileFeignClient.class})
 public class SmallIntegrationTest extends AbstractTestCase {
