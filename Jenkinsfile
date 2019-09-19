@@ -14,8 +14,7 @@ pipeline {
         stage ("Test") {
             steps {
                 git 'https://github.com/eclipse/kuksa.integration.git'
-                sh """head -c 10000 /dev/urandom > testing/src/test/resources/randomBytes && \
-		cd testing && \
+                sh """cd testing && \
                 export JAVA_HOME=/opt/tools/java/openjdk/latest && \
                 /opt/tools/apache-maven/latest/bin/mvn --batch-mode clean test \
 		-Dhono_device_registry=${hono_device_registry}  \

@@ -44,8 +44,6 @@ import org.springframework.web.multipart.MultipartFile;
 @ContextConfiguration(classes = {GlobalConfiguration.class, HawkBitConfiguration.class, AppStoreConfiguration.class, HawkbitMultiPartFileFeignClient.class})
 public class SmallIntegrationTest extends AbstractTestCase {
 
-	// head -c 10000 /dev/urandom > testing/src/test/resources/randomBytes
-
     private static final String JSON_PROPERTY_ID = "id";
 
     private static String securityToken;
@@ -234,6 +232,8 @@ public class SmallIntegrationTest extends AbstractTestCase {
 
     public void uploadArtifactToHawkbit() {
         ClassLoader classLoader = new HonoConfiguration().getClass().getClassLoader();
+        
+        // head -c 10000 /dev/urandom > testing/src/test/resources/randomBytes
         File file = new File(classLoader.getResource("randomBytes").getFile());
 
         MultipartFile imageFile = new MultipartFile() {
