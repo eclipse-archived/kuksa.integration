@@ -1,0 +1,12 @@
+testCases:
+  integrationSetup:
+    testData:
+      - deviceId: OEM_Integration3
+        appname: IntApp
+        username: testuser3
+        password: testpassword
+        userType: Normal
+        category: TestCategory2
+        version: 1.0
+        owner: OEM_EXPLEO
+        authToken: 78d06ca7aba7405ffd0dd82d24408fe6

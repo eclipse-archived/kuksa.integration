@@ -1,5 +1,5 @@
 /*********************************************************************
- * Copyright (c)  2019 Assystem GmbH [and others].
+ * Copyright (c)  2019 Expleo GmbH [and others].
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -7,18 +7,21 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * Contributors: Assystem GmbH
+ * Contributors: Expleo GmbH
  **********************************************************************/
 
 package org.eclipse.kuksa.testing.config;
 
+import feign.auth.BasicAuthRequestInterceptor;
+import feign.codec.Encoder;
+import org.eclipse.kuksa.testing.FeignMultipartEncoder;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-
 @Component
+@Configuration
 public class HawkBitConfiguration {
 	@Value("${hawkbit.tenant}")
 	private String tenant;
@@ -80,4 +83,18 @@ public class HawkBitConfiguration {
 
 	}
 
+	@Bean
+	feign.Logger.Level feignLoggerLevel() {
+		return feign.Logger.Level.NONE;
+	}
+
+	@Bean
+	public BasicAuthRequestInterceptor basicAuthRequestInterceptor() {
+		return new BasicAuthRequestInterceptor(username, password);
+	}
+
+	@Bean
+	public Encoder feignFormEncoder() {
+		return new FeignMultipartEncoder();
+	}
 }

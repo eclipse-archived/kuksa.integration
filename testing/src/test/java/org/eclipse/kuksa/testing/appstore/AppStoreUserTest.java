@@ -34,6 +34,11 @@ public class AppStoreUserTest extends AbstractAppStoreTest {
     @Override
     protected void testSetup() throws Exception {
         super.testSetup();
+
+        if(checkUsernameExists() != null) {
+            removeUser(checkUsernameExists());
+        }
+
         String body = createUser();
         JSONObject jsonObject = new JSONObject(body);
         System.out.println("USER" + body);

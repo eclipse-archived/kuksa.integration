@@ -29,7 +29,7 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 public class CustomResponseErrorHandler extends DefaultResponseErrorHandler {
 
 	@Override
-	public boolean hasError(ClientHttpResponse response) throws IOException {
+	public boolean hasError(ClientHttpResponse response) {
 		// return always false -> response will be evaluated in test case
 		return false;
 	}

@@ -54,15 +54,15 @@ public class Request {
 
 	public static class Builder {
 
-		private String url;
+		public String url;
 
-		private HttpMethod method;
+		public HttpMethod method;
 
-		private HttpHeaders headers;
+		public HttpHeaders headers;
 
-		private String body;
+		public String body;
 
-		private Credentials credentials;
+		public Credentials credentials;
 
 		public Builder url(String url) {
 			this.url = url;

@@ -8,10 +8,12 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors: Expleo Germany GmbH
+ * @author: cnguyen
  **********************************************************************/
 
 package org.eclipse.kuksa.testing;
 
+import org.apache.logging.log4j.Level;
 import org.eclipse.kuksa.testing.client.Request;
 import org.eclipse.kuksa.testing.client.TestApiRunner;
 import org.eclipse.kuksa.testing.model.TestCase;
@@ -19,13 +21,14 @@ import org.eclipse.kuksa.testing.model.TestSuite;
 import org.eclipse.kuksa.testing.model.YamlConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.*;
 import org.junit.rules.TestName;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,20 +41,21 @@ import static org.junit.Assert.fail;
 
 /**
  * Parent class for all test cases which executes API-Calls. The
- * application.properties file will be used for test configuration. If necessary
+ * application.yml file will be used for test configuration. If necessary
  * these configuration can be overridden by an extra local.properties file in
  * the same directory.
  *
- * @author cnguyen
+ * @author cnguyen, alezor
  */
+
+
+@EnableFeignClients
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestPropertySource({"classpath:application.properties", "classpath:local.properties"})
+@SpringBootTest
+@TestPropertySource({"classpath:application.yml", "classpath:local.properties"})
 public abstract class AbstractTestCase {
 
-    protected static final String PROTOCOL_HTTP = "http://";
-    protected static final String PROTOCOL_TCP = "tcp://";
-
-    private static final String TEST_RESULT_PATH = "src/test/resources/result/";
+    private static final String TEST_RESULT_PATH = "src/test/resources/testData/";
 
     public static final Logger LOGGER = LogManager.getLogger();
 
@@ -75,6 +79,7 @@ public abstract class AbstractTestCase {
      */
     @Before
     public final void initialize() throws Exception {
+
         LOGGER.debug("SETUP START");
         if (testSuite == null) {
             String file = TEST_RESULT_PATH + getTestFile();
@@ -123,11 +128,7 @@ public abstract class AbstractTestCase {
 
     // UTIL
     protected static String buildUrl(String baseUrl, String path) {
-        return new StringBuilder().append(baseUrl).append(path).toString();
-    }
-
-    protected static String staticBuildUrl(String baseUrl, String path) {
-        return new StringBuilder().append(baseUrl).append(path).toString();
+        return baseUrl + path;
     }
 
     protected static HttpHeaders getBaseRequestHeaders() {
@@ -138,15 +139,7 @@ public abstract class AbstractTestCase {
         return headers;
     }
 
-    protected static HttpHeaders staticGetBaseRequestHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setContentLanguage(Locale.US);
-
-        return headers;
-    }
-
-    protected JSONObject getBodyAsJson(ResponseEntity<String> response) {
+    JSONObject getBodyAsJson(ResponseEntity<String> response) {
         return getBodyAsJson(response.getBody());
     }
 
@@ -160,7 +153,7 @@ public abstract class AbstractTestCase {
         return null;
     }
 
-    protected String getJsonValue(JSONObject json, String property) {
+    String getJsonValue(JSONObject json, String property) {
         try {
             return json.getString(property);
         } catch (Exception e) {
@@ -170,29 +163,7 @@ public abstract class AbstractTestCase {
         return null;
     }
 
-    protected MqttMessage setMqttMessage(String value) {
-        byte[] payload = value.getBytes();
-        MqttMessage msg = new MqttMessage(payload);
-        msg.setQos(0);
-        msg.setRetained(false);
-        return msg;
-    }
-
-    protected JSONObject getJsonObject(JSONObject json, String property) {
-        try {
-            return json.getJSONObject(property);
-        } catch (Exception e) {
-            LOGGER.error("Property " + property + "does not exist.", e);
-            fail();
-        }
-        return null;
-    }
-
     protected static ResponseEntity<String> executeApiCall(Request request) {
-        return runner.executeApiCall(request);
-    }
-
-    protected static ResponseEntity<String> staticExecuteApiCall(Request request) {
         return runner.executeApiCall(request);
     }
 

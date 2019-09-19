@@ -50,10 +50,10 @@ public class TestApiRunner {
 	private void logRequest(String url, HttpMethod httpMethod, @Nullable HttpEntity<String> httpEntity) {
 		LOGGER.info("REQUEST {} {}" + httpMethod + url);
 		if (httpEntity != null) {
-			if (httpEntity.getHeaders() != null) {
-				HttpHeaders headers = httpEntity.getHeaders();
-				LOGGER.info("HEADERS {}" + headers);
-			}
+
+			HttpHeaders headers = httpEntity.getHeaders();
+			LOGGER.info("HEADERS {}" + headers);
+
 			if (httpEntity.hasBody()) {
 				String body = httpEntity.getBody();
 				LOGGER.info("BODY {}" + body);

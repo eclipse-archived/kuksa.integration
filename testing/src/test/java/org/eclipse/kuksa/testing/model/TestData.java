@@ -16,14 +16,14 @@ import java.util.Map;
 
 public class TestData {
 
+    private String route;
+
     /**
      * HONO
      */
     private String tenantId;
 
     private String deviceId;
-
-    private String authId;
 
     private String username;
 
@@ -38,20 +38,20 @@ public class TestData {
     /**
      * Appstore
      */
-
     private String appname;
+
+    private String owner;
+
+    private String userType;
+
+    private String category;
+
+    private String version;
 
     /**
      * HawkBit
      */
-    private String controllerId;
-
-    private String description;
-
-    private String name;
-
-    private String target;
-
+    private String authToken;
 
     public String getTenantId() {
         return tenantId;
@@ -61,8 +61,8 @@ public class TestData {
         return deviceId;
     }
 
-    public String getAuthId() {
-        return authId;
+    public String getAuthToken() {
+        return authToken;
     }
 
     public String getPassword() {
@@ -87,6 +87,24 @@ public class TestData {
 
     public String getAppname() {
         return appname;
+    }
+
+    public String getRoute() { return route; }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getVersion() {
+        return version;
     }
 
 }
