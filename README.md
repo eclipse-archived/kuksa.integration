@@ -12,6 +12,9 @@ Contributors:
 *****************************************************************************
 -->
 
+
+# Caution! This repository is discussed to be discontinued. Check [issue 36](https://github.com/eclipse/kuksa.integration/issues/36) and discuss.
+
 # Kuksa-Integration Repo
 
 This Repository contains necessary tests for Eclipse Kuksa Platforms.
