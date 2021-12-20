@@ -13,7 +13,9 @@ Contributors:
 -->
 
 
-# Caution! This repository is discussed to be discontinued. Check [issue 36](https://github.com/eclipse/kuksa.integration/issues/36) and discuss.
+# THIS REPOSITORY HAS BEEN ARCHIVED, see [issue 36](https://github.com/eclipse/kuksa.integration/issues/36) for details.
+
+# Log4j2 WARNING: Code in this repo may depend on or make use of code which is subject to [CVE-2021-44228](https://nvd.nist.gov/vuln/detail/CVE-2021-44228)
 
 # Kuksa-Integration Repo
 
